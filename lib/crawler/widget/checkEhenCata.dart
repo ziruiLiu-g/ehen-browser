@@ -41,8 +41,9 @@ class _EhenCheckState extends State<EhenCheck> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(left: 5),
       alignment: Alignment.center,
-      height: 40.0,
+      height: 30.0,
       child: _createAllChecks(),
     );
   }
@@ -74,19 +75,19 @@ class _EhenCheckState extends State<EhenCheck> {
       },
       child: Container (
         width: 110,
-        height: 18,
         alignment: Alignment.center,
         //设置了 decoration 就不能设置color，两者只能存在一个
         decoration: BoxDecoration(
           color: checkMap[key.toString()]! ? values['activeColor'] : values['checkColor'],
           // border: Border(left: BorderSide(width: 1, color: Color(0x3D3B3BFF))),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(width: 2.0, color: Colors.grey)
         ),
         child: Text(
           key,
           style: TextStyle(
             color: checkMap[key.toString()]! ? Colors.white : Colors.grey,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             decoration: TextDecoration.none,
           ),

@@ -27,7 +27,7 @@ Future<String> requestData({String? search, String? cataNum, String? next}) asyn
   
   print(url);
   
-  var response = await http.get(url, headers: header);
+  var response = await http.get(Uri.parse(url), headers: header);
   if (response.statusCode == 200) {
     return response.body;
   }

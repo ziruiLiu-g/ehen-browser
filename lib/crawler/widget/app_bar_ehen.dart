@@ -12,7 +12,7 @@ ehenAppBar(Function(String) searchCallBack) {
       titleSpacing: 0,
       elevation: 0,
       title: Container(
-        color: Colors.white,
+        // color: Color(0xffff9db5),
         alignment: Alignment.center,
         height: 75,
         // width: mediaQuery.size.width,

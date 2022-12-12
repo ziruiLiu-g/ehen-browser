@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ehentai_browser/crawler/util/color.dart';
 import 'package:ehentai_browser/crawler/widget/app_bar_ehen.dart';
 import 'package:ehentai_browser/crawler/widget/checkEhenCata.dart';
 import 'package:ehentai_browser/crawler/xhenhttp/dao/xhen_dao.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'ehentai_crawler.dart';
 import 'model/gallery_object.dart';
+import 'util/theme.dart';
 
 class Xhen extends StatefulWidget {
   const Xhen({Key? key}) : super(key: key);
@@ -53,9 +55,14 @@ class _XhenState extends State<Xhen> {
 
     var result = await XhenDao.get_gallery(gplist);
     var jresult = jsonDecode(result)['gmetadata'];
-
+    if (jresult == null || jresult == '') {
+      glist.clear();
+      setState(() {});
+      return;
+    }
     for (var g in jresult) {
-      Gallery gl = Gallery(g['thumb'], g['title'], g['filecount'], g['category'], g['tags'], g['rating']);
+      Gallery gl = Gallery(g['thumb'], g['title'], g['filecount'],
+          g['category'], g['tags'], g['rating']);
       glist.add(gl);
     }
     setState(() {});
@@ -65,7 +72,7 @@ class _XhenState extends State<Xhen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
+        preferredSize: Size.fromHeight(104.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -79,8 +86,8 @@ class _XhenState extends State<Xhen> {
               },
             ),
             Container(
-              height: 35,
-              // margin: EdgeInsets.only(top: 2),
+              height: 40,
+              margin: EdgeInsets.only(top: 4),
               alignment: Alignment.center,
               child: EhenCheck((cataNum) {
                 cata = '$cataNum';
@@ -89,15 +96,17 @@ class _XhenState extends State<Xhen> {
           ],
         ),
       ),
-      body: glist.length <= 0 ? Container() : ListView(
-        children: [
-          get_gallery_rows_list(),
-          Padding(
-            padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: _nextButton(),
-          ),
-        ],
-      ),
+      body: glist.length <= 0
+          ? Container()
+          : ListView(
+              children: [
+                get_gallery_rows_list(),
+                Padding(
+                  padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                  child: _nextButton(),
+                ),
+              ],
+            ),
     );
   }
 
@@ -105,9 +114,12 @@ class _XhenState extends State<Xhen> {
     return Column(
       children: <Widget>[
         TextButton(
-          child: const Text(
+          child: Text(
             "NEXT >>",
-            style: TextStyle(fontSize: 36, color: Colors.black),
+            style: TextStyle(
+              fontSize: 36,
+              color: isDarkMode(context) ? Colors.white60 : primary,
+            ),
           ),
           onPressed: () async {
             await _searchGallerys(false);
@@ -135,23 +147,22 @@ class _XhenState extends State<Xhen> {
 
   get_gallery_row(Gallery g) {
     return Container(
-        padding: EdgeInsets.only(top: 10),
-        height: 180,
+        height: 150,
         child: InkWell(
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.network(
                 g.url,
-                height: 160,
-                width: 120,
+                height: 130,
+                width: 110,
                 fit: BoxFit.cover,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 25),
               SizedBox(
                 // color: Colors.yellow,
-                height: 160,
+                height: 120,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,10 +172,11 @@ class _XhenState extends State<Xhen> {
                       child: Text(
                         '${g.title}  (${g.image_count}P)',
                         maxLines: 3,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black,
+                          fontSize: 16,
+                          color:
+                              isDarkMode(context) ? Colors.white : Colors.black,
                           decoration: TextDecoration.none,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -173,12 +185,18 @@ class _XhenState extends State<Xhen> {
                     const Spacer(),
                     Text(
                       'Category: ${g.cata}',
-                      style: const TextStyle(fontSize: 18, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xffff9db5),
+                          decoration: TextDecoration.none),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       'Rating: ${g.rating}',
-                      style: const TextStyle(fontSize: 18, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xffff9db5),
+                          decoration: TextDecoration.none),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
