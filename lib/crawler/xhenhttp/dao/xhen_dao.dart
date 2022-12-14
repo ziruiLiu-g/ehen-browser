@@ -12,6 +12,10 @@ class XhenDao {
     return _send(list);
   }
 
+  static get_img(list) {
+    return _img_send(list);
+  }
+
   static _send(list) async {
     BaseRequest request;
     request = XhenRequest();
@@ -20,6 +24,20 @@ class XhenDao {
         .add("method", "gdata")
         .add("gidlist", list)
         .add("namespace", 1);
+
+    var result = await HiNet.getInstace().fire(request);
+
+
+    return result;
+  }
+
+  static _img_send(list) async {
+    BaseRequest request;
+    request = XhenRequest();
+
+    request
+        .add("method", "gtoken")
+        .add("pagelist", list);
 
     var result = await HiNet.getInstace().fire(request);
 

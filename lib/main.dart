@@ -1,10 +1,21 @@
+import 'package:ehentai_browser/crawler/localdb/local_storage.dart';
+import 'package:ehentai_browser/crawler/model/gallery_object.dart';
+import 'package:ehentai_browser/crawler/page/startPage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-import 'crawler/index.dart';
+import 'crawler/common/global.dart';
+import 'crawler/controller/theme_controller.dart';
+import 'crawler/page/gallery_page.dart';
+import 'crawler/page/index.dart';
 import 'crawler/util/color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Global.init().then((e) => runApp(const MyApp()));
+  Global.init();
   runApp(const MyApp());
 }
 
@@ -14,17 +25,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        brightness:Brightness.light,
-        // primaryColor: Colors.white,
-        primarySwatch: primary,
-      ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: darkPrimary,
       ),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: primary,
+      ),
+      themeMode: ThemeMode.dark,
       builder: (context, child) => Scaffold(
         // Global GestureDetector that will dismiss the keyboard
         body: GestureDetector(
@@ -34,8 +45,31 @@ class MyApp extends StatelessWidget {
           child: child,
         ),
       ),
-      home: Xhen(),
+      home: FutureBuilder<dynamic>(
+          future: loadingPageTimer(),
+          builder: (context, snapshot) {
+            Widget child;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              child = const StartPage(
+                key: ValueKey(1),
+              );
+            } else {
+              child = const Xhen(
+                key: ValueKey(0),
+              );
+            }
+            return AnimatedSwitcher(
+              duration: Duration(seconds: 3),
+              child: child,
+            );
+          }),
     );
+  }
+
+  loadingPageTimer() async {
+    await Future.delayed(Duration(milliseconds: 1500), () {
+      print("loading page end.");
+    });
   }
 
   void hideKeyboard(BuildContext context) {
@@ -45,77 +79,3 @@ class MyApp extends StatelessWidget {
     }
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//
-//   // This widget is the home page of your application. It is stateful, meaning
-//   // that it has a State object (defined below) that contains fields that affect
-//   // how it looks.
-//
-//   // This class is the configuration for the state. It holds the values (in this
-//   // case the title) provided by the parent (in this case the App widget) and
-//   // used by the build method of the State. Fields in a Widget subclass are
-//   // always marked "final".
-//
-//   final String title;
-//
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     // This method is rerun every time setState is called, for instance as done
-//     // by the _incrementCounter method above.
-//     //
-//     // The Flutter framework has been optimized to make rerunning build methods
-//     // fast, so that you can just rebuild anything that needs updating rather
-//     // than having to individually change instances of widgets.
-//     return Scaffold(
-//       appBar: AppBar(
-//         // Here we take the value from the MyHomePage object that was created by
-//         // the App.build method, and use it to set our appbar title.
-//         title: Text(widget.title),
-//       ),
-//       body: Center(
-//         // Center is a layout widget. It takes a single child and positions it
-//         // in the middle of the parent.
-//         child: Column(
-//           // Column is also a layout widget. It takes a list of children and
-//           // arranges them vertically. By default, it sizes itself to fit its
-//           // children horizontally, and tries to be as tall as its parent.
-//           //
-//           // Invoke "debug painting" (press "p" in the console, choose the
-//           // "Toggle Debug Paint" action from the Flutter Inspector in Android
-//           // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-//           // to see the wireframe for each widget.
-//           //
-//           // Column has various properties to control how it sizes itself and
-//           // how it positions its children. Here we use mainAxisAlignment to
-//           // center the children vertically; the main axis here is the vertical
-//           // axis because Columns are vertical (the cross axis would be
-//           // horizontal).
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             const Text(
-//               'You have pushed the button this many times:',
-//             ),
-//             Text(
-//               '$_counter',
-//               style: Theme.of(context).textTheme.headline4,
-//             ),
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _incrementCounter,
-//         tooltip: 'Increment',
-//         child: const Icon(Icons.add),
-//       ), // This trailing comma makes auto-formatting nicer for build methods.
-//     );
-//   }
-// }

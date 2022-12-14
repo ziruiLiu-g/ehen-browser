@@ -1,21 +1,12 @@
+import 'package:ehentai_browser/crawler/util/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
 
-final cataMap = {
-  'Doujinshi': {"value": 2, "activeColor": Colors.red[400], "checkColor": Colors.red[200]},
-  'Manga': {"value": 4, "activeColor": Colors.orange[400], "checkColor": Colors.orange[200]},
-  'Artist CG': {"value": 8, "activeColor": Colors.yellow[600], "checkColor": Colors.yellow[200]},
-  'Game CG': {"value": 16, "activeColor": Colors.green[400], "checkColor": Colors.green[200]},
-  'Western': {"value": 512, "activeColor": Colors.lightGreen[300], "checkColor": Colors.lightGreen[100]},
-  'Non-H': {"value": 256, "activeColor": Colors.lightBlue[300], "checkColor": Colors.lightBlue[100]},
-  'Image Set': {"value": 32, "activeColor": Colors.blueAccent[400], "checkColor": Colors.blueAccent[100]},
-  'Cosplay': {"value": 64, "activeColor": Colors.deepPurple[400], "checkColor": Colors.deepPurple[200]},
-  'Asian Porn': {"value": 128, "activeColor": Colors.pink[300], "checkColor": Colors.red[100]},
-  'Misc': {"value": 1, "activeColor": Colors.grey[700], "checkColor": Colors.grey[400]},
-};
+import '../controller/cata_controller.dart';
 
 class EhenCheck extends StatefulWidget {
-
   Function(int) getCataFunc;
 
   @override
@@ -25,18 +16,7 @@ class EhenCheck extends StatefulWidget {
 }
 
 class _EhenCheckState extends State<EhenCheck> {
-  Map<String, bool> checkMap = {
-    "Doujinshi": true,
-    "Manga": true,
-    "Artist CG": true,
-    "Game CG": true,
-    "Western": true,
-    "Non-H": true,
-    "Image Set": true,
-    "Cosplay": true,
-    "Asian Porn": true,
-    "Misc": true,
-  };
+  final ctaController = Get.put(CataController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +31,12 @@ class _EhenCheckState extends State<EhenCheck> {
   _createAllChecks() {
     Widget content;
     List<Widget> ww = [];
-    for (var k in checkMap.keys) {
+    for (var k in ctaController.cataCheck.keys) {
       var values = cataMap[k];
       ww.add(_buildCheckBox(k, values));
-      ww.add(SizedBox(width: 20),);
+      ww.add(
+        SizedBox(width: 20),
+      );
     }
     content = ListView(
       scrollDirection: Axis.horizontal,
@@ -65,46 +47,42 @@ class _EhenCheckState extends State<EhenCheck> {
   }
 
   _buildCheckBox(key, values) {
-    return InkWell(
-      key: Key(key),
-      onTap: () {
-        bool ch = !checkMap[key.toString()]!;
-        checkMap[key.toString()] = ch;
-        widget.getCataFunc(calculateCataNum()!);
-        setState(() {});
-      },
-      child: Container (
-        width: 110,
-        alignment: Alignment.center,
-        //设置了 decoration 就不能设置color，两者只能存在一个
-        decoration: BoxDecoration(
-          color: checkMap[key.toString()]! ? values['activeColor'] : values['checkColor'],
-          // border: Border(left: BorderSide(width: 1, color: Color(0x3D3B3BFF))),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(width: 2.0, color: Colors.grey)
-        ),
-        child: Text(
-          key,
-          style: TextStyle(
-            color: checkMap[key.toString()]! ? Colors.white : Colors.grey,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.none,
+    return Obx(() => InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          key: Key(key),
+          onTap: () {
+            var curKey = key.toString();
+            Map<String, Object?>? curNum = cataMap[curKey];
+            var checkValue = (curNum!['value'] as int?)!;
+            ctaController.changeCheck(curKey);
+            ctaController.updateNum(
+                ctaController.cataCheck[curKey]! ? 0 - checkValue : checkValue);
+
+            widget.getCataFunc(ctaController.cataNum);
+          },
+          child: Container(
+            width: 110,
+            alignment: Alignment.center,
+            //设置了 decoration 就不能设置color，两者只能存在一个
+            decoration: BoxDecoration(
+                color: ctaController.cataCheck[key.toString()]!
+                    ? values['activeColor']
+                    : values['checkColor'],
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(width: 2.0, color: Colors.grey)),
+            child: Text(
+              key,
+              style: TextStyle(
+                color: ctaController.cataCheck[key.toString()]!
+                    ? Colors.white
+                    : Colors.grey,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  int? calculateCataNum() {
-    int? num = 0;
-    for (var k in checkMap.keys) {
-      if (!checkMap[k]!) {
-        Map<String, Object?>? curNum = cataMap[k];
-        num = num! +  (curNum!['value'] as int?)!;
-      }
-    }
-
-    return num;
+        ));
   }
 }

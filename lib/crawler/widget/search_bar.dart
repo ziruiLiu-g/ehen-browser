@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:ehentai_browser/crawler/controller/theme_controller.dart';
+import 'package:ehentai_browser/crawler/util/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class EhenSearchBar extends StatefulWidget {
   ///搜索框上显示的文案
@@ -40,6 +43,10 @@ class EhenSearchBar extends StatefulWidget {
   ///是否显示左侧的返回键
   bool isShowBackButton;
 
+  Function()? searchIconCallBack;
+
+  Function(String text)? inputCallBack;
+
   ///搜索框的高度
   double height;
 
@@ -48,7 +55,7 @@ class EhenSearchBar extends StatefulWidget {
       this.hint = "",
       this.defaultBorderRadius = 5.0,
       this.margin = const EdgeInsets.only(top: 20.0, bottom: 20.0),
-      this.padding = const EdgeInsets.only(left: 10),
+      this.padding = const EdgeInsets.only(left: 0),
       this.splashColor = Colors.pink,
       this.focusNode,
       this.controller,
@@ -56,11 +63,11 @@ class EhenSearchBar extends StatefulWidget {
       this.onBackCallback,
       this.clearCallback,
       this.inputKeyWordsLength = 20,
-      this.fontSize = 18,
+      this.fontSize = 15,
       this.isShowBackButton = false,
-      this.height = 35}) {
-    this.height = this.height;
-  }
+      this.searchIconCallBack,
+      this.inputCallBack,
+      this.height = 35});
 
   @override
   State createState() {
@@ -71,6 +78,8 @@ class EhenSearchBar extends StatefulWidget {
 class SearchTextFieldBarState extends State<EhenSearchBar> {
   static MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
   static double width = mediaQuery.size.width;
+
+
 
   ///为true 时显示清除选项
   bool showClear = false;
@@ -83,9 +92,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
     super.initState();
 
     ///创建默认的焦点控制
-    if (widget.focusNode == null) {
-      widget.focusNode = new FocusNode();
-    }
+    widget.focusNode ??= FocusNode();
   }
 
   @override
@@ -93,6 +100,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
     return Container(
       ///外边距
       margin: widget.margin,
+
       ///水平方向线性排列
       child: Row(
         children: [
@@ -143,7 +151,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       height: widget.height,
 
       ///获取当前StatelessWidget的宽度
-      width: width - 50,
+      width: width - 120,
 
       ///对齐方式
       alignment: Alignment.center,
@@ -164,21 +172,32 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
   Row buildRow() {
     return Row(
       ///左对齐
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
       ///居左
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ///左侧的搜索图标
-        Icon(
-          Icons.search,
-          color: Colors.pink,
-          size: 24.0,
-          semanticLabel: 'Text to announce in accessibility modes',
+        InkWell(
+          onTap: widget.searchIconCallBack!,
+          child: Container(
+            alignment: Alignment.centerRight,
+            width: 32,
+            child: Obx(
+                  () => Icon(
+                Icons.search,
+                color: ThemeController.isLightTheme ? primary : darkPrimary,
+                size: 25.0,
+                semanticLabel: 'Text to announce in accessibility modes',
+              ),
+            ),
+          ),
         ),
-
-        SizedBox(
-          width: 8.0,
+        const VerticalDivider(
+          color: Color(0xff999999),
+          width: 10,
+          indent: 10,
+          endIndent: 10,
         ),
 
         ///中间的输入框
@@ -210,7 +229,8 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       keyboardAppearance: Brightness.dark,
 
       ///控制器配置
-      controller: widget.controller == null ? defaultTextController : widget.controller,
+      controller:
+          widget.controller ?? defaultTextController,
 
       ///最大行数
       maxLines: 1,
@@ -225,10 +245,10 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       onChanged: (text) {
         ///多层判断 优化刷新
         ///只有当有改变时再刷新
-        ///
-        print(text);
 
-        if (text.length > 0) {
+        widget.inputCallBack!(text);
+
+        if (text.length >= 0) {
           if (!showClear) {
             showClear = true;
             setState(() {});
@@ -253,7 +273,10 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       autofocus: false,
       focusNode: widget.focusNode,
 
-      style: TextStyle(fontSize: widget.fontSize, color: Colors.black54, fontWeight: FontWeight.w300),
+      style: TextStyle(
+          fontSize: widget.fontSize,
+          color: Colors.black54,
+          fontWeight: FontWeight.w300),
 
       ///输入框的边框装饰
       decoration: InputDecoration(
@@ -294,9 +317,10 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
           } else {
             widget.controller!.text = "";
           }
-          if (widget.clearCallback != null) {
-            widget.clearCallback!();
-          }
+          // if (widget.clearCallback != null) {
+          //   widget.clearCallback!();
+          // }
+          widget.inputCallBack!('');
         },
       );
     } else {
