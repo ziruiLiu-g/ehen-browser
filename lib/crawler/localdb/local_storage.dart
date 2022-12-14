@@ -8,11 +8,11 @@ class LocalStorage {
     prefs = await SharedPreferences.getInstance();
   }
 
-  static save(String key, String value) {
-    prefs?.setString(key, value);
+  static save(String key, String value) async {
+    await prefs?.setString(key, value);
   }
 
-  static get(String key) {
+  static get(String key)  {
     return prefs?.get(key);
   }
 
@@ -21,8 +21,8 @@ class LocalStorage {
   }
 
 
-  static savebool(String key, bool value) {
-    prefs?.setBool(key, value);
+  static savebool(String key, bool value) async {
+    await prefs?.setBool(key, value);
   }
 
   static getbool(String key) {

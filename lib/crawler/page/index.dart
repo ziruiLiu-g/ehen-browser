@@ -11,7 +11,9 @@ import 'package:ehentai_browser/crawler/xhenhttp/dao/xhen_dao.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../common/const.dart';
 import '../controller/theme_controller.dart';
+import '../localdb/local_storage.dart';
 import '../util/ehentai_crawler.dart';
 import '../model/gallery_object.dart';
 import '../widget/gallery_card.dart';
@@ -31,6 +33,7 @@ class _XhenState extends State<Xhen> {
   var next;
   var search;
   var cata;
+  var beforeDate;
 
   var isInit = true;
 
@@ -95,18 +98,18 @@ class _XhenState extends State<Xhen> {
 
   // 后端加载
   _searchGallerys(bool isPrev,
-      {String? dateBefore, List<Gallery>? list}) async {
+      {List<Gallery>? list}) async {
     var htmlDoc = await loadGallerysHtml(isPrev,
         search: search,
         cata: cata,
         prev: prev,
         next: next,
-        dateBefore: dateBefore);
+        dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
     next = getGalleryNextPage(htmlDoc);
     prev = getGalleryPrevPage(htmlDoc);
-
+    beforeDate = null;
     isInit = false;
 
     // scrollController.animateTo(
@@ -133,8 +136,7 @@ class _XhenState extends State<Xhen> {
                 "<< PREV",
                 style: TextStyle(
                   fontSize: 20,
-                  color:
-                  ThemeController.isLightTheme ? primary : Colors.white60,
+                  color: galleryPageButtonColor(ThemeController.isLightTheme),
                 ),
               ),
             ),
@@ -150,8 +152,7 @@ class _XhenState extends State<Xhen> {
                 "JUMP",
                 style: TextStyle(
                   fontSize: 20,
-                  color:
-                  ThemeController.isLightTheme ? primary : Colors.white60,
+                  color: galleryPageButtonColor(ThemeController.isLightTheme),
                 ),
               ),
             ),
@@ -162,13 +163,11 @@ class _XhenState extends State<Xhen> {
                 "NEXT >>",
                 style: TextStyle(
                   fontSize: 20,
-                  color:
-                  ThemeController.isLightTheme ? primary : Colors.white60,
+                  color: galleryPageButtonColor(ThemeController.isLightTheme),
                 ),
               ),
             ),
             onPressed: () {
-              // await _searchGallerys(false);
               setState(() {});
             },
           ),
@@ -247,8 +246,7 @@ class _XhenState extends State<Xhen> {
 
   // 日期选择器回调函数， 负责弹窗
   _date_selector_callback(date, context) async {
-    setState(() {
-    });
+    setState(() {beforeDate = date;});
     Navigator.pop(context);
   }
 
@@ -300,9 +298,7 @@ class _XhenState extends State<Xhen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
-                          color: ThemeController.isLightTheme
-                              ? Colors.black
-                              : Colors.white,
+                          color: galleryTitleColor(ThemeController.isLightTheme),
                           decoration: TextDecoration.none,
                         ),
                         overflow: TextOverflow.ellipsis,

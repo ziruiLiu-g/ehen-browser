@@ -32,9 +32,6 @@ abstract class BaseRequest {
     } else {
       uri = Uri.http(authority(), pathStr);
     }
-
-    print('url: ${uri.toString()}');
-
     return uri.toString();
   }
 

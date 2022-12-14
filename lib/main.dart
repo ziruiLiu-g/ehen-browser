@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:logger/logger.dart';
 
+import 'crawler/common/const.dart';
 import 'crawler/common/global.dart';
 import 'crawler/controller/theme_controller.dart';
 import 'crawler/page/gallery_page.dart';
@@ -14,9 +16,7 @@ import 'crawler/util/color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Global.init().then((e) => runApp(const MyApp()));
-  Global.init();
-  runApp(const MyApp());
+  Global.init().then((e) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: primary,
       ),
-      themeMode: ThemeMode.dark,
+      themeMode:  LocalStorage.getbool(THEME_IS_LIGHT_KEY) ? ThemeMode.light : ThemeMode.dark,
       builder: (context, child) => Scaffold(
         // Global GestureDetector that will dismiss the keyboard
         body: GestureDetector(
@@ -68,7 +68,6 @@ class MyApp extends StatelessWidget {
 
   loadingPageTimer() async {
     await Future.delayed(Duration(milliseconds: 1500), () {
-      print("loading page end.");
     });
   }
 

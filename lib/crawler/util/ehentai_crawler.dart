@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:logger/logger.dart';
 
 import '../model/gallery_object.dart';
 import '../xhenhttp/dao/xhen_dao.dart';
@@ -14,6 +15,8 @@ var header = {
 
 const XHENTAIL_PREFIX = 'https://e-hentai.org/?';
 const XHENTAIL_GALLERY_PREFIX = 'https://e-hentai.org/g/';
+
+final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
 
 Future<String> requestData(
     {String? search,
@@ -42,7 +45,7 @@ Future<String> requestData(
     url += '&jump=$dateBefore';
   }
 
-  print(url);
+  _logger.i('Collecting data from: $url');
 
   var response = await http.get(Uri.parse(url), headers: header);
   if (response.statusCode == 200) {
@@ -110,17 +113,18 @@ String get_Gallery_Show_Img(html) {
 String? get_Max_Page(html) {
   Document document = parse(html);
   // use css selector
-  print(document);
   print(
       '${document.querySelectorAll('body > div:last-child > table > tbody > tr > td:last-child')}');
 }
 
-Future<Document> loadGallerysHtml(bool isPrev,
-    {String? search,
-    String? cata,
-    String? next,
-    String? prev,
-    String? dateBefore,}) async {
+Future<Document> loadGallerysHtml(
+  bool isPrev, {
+  String? search,
+  String? cata,
+  String? next,
+  String? prev,
+  String? dateBefore,
+}) async {
   var html;
   if (isPrev) {
     html = await requestData(
@@ -133,13 +137,11 @@ Future<Document> loadGallerysHtml(bool isPrev,
   return parse(html);
 }
 
-
 getGalleryNextPage(Document doc) {
   var nextUrl = get_next_page_url(doc);
   var next = nextUrl?.substring(nextUrl.lastIndexOf("=") + 1, nextUrl.length);
   return next;
 }
-
 
 getGalleryPrevPage(Document doc) {
   var prevUrl = get_prev_page_url(doc);

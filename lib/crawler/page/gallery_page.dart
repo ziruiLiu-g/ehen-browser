@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
+import '../common/const.dart';
 import '../controller/theme_controller.dart';
 import '../util/color.dart';
 import '../util/image_save_load.dart';
@@ -69,7 +70,7 @@ class _GalleryPageState extends State<GalleryPage> {
           onTap: () {},
           child: Container(
             height: 60,
-            color: ThemeController.isLightTheme ? primary : darkPrimary,
+            color: themeColor(ThemeController.isLightTheme),
             alignment: Alignment.center,
             child: const Text(
               "Read",
@@ -116,7 +117,7 @@ class _GalleryPageState extends State<GalleryPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 22,
-            color: ThemeController.isLightTheme ? Colors.black : Colors.white60,
+            color: galleryPageButtonColor(ThemeController.isLightTheme),
           ),
         ),
       ),
@@ -199,9 +200,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 '${t}: ',
                 style: TextStyle(
                   fontSize: 15,
-                  color: ThemeController.isLightTheme
-                      ? Colors.black
-                      : Colors.white60,
+                  color: galleryTitleColor(ThemeController.isLightTheme),
                 ),
               ),
             ),
@@ -233,7 +232,7 @@ class _GalleryPageState extends State<GalleryPage> {
             '$fieldName:',
             style: TextStyle(
               fontSize: 16,
-              color: ThemeController.isLightTheme ? Colors.black : Colors.white,
+              color: galleryTitleColor(ThemeController.isLightTheme),
             ),
           ),
         ),
@@ -241,31 +240,12 @@ class _GalleryPageState extends State<GalleryPage> {
           '$field',
           style: TextStyle(
             fontSize: 15,
-            color: ThemeController.isLightTheme ? Colors.black : Colors.white,
+            color: galleryTitleColor(ThemeController.isLightTheme),
           ),
         )
       ],
     );
   }
-
-  // get_page() async {
-  //   var result = await XhenDao.get_gallery([
-  //     [2401088, "5adc79095a"]
-  //   ]);
-  //   var g1 = jsonDecode(result)['gmetadata'][0];
-  //   g = Gallery(
-  //       url: g1['thumb'],
-  //       title: g1['title'],
-  //       image_count: g1['filecount'],
-  //       cata: g1['category'],
-  //       tags: g1['tags'],
-  //       rating: g1['rating'],
-  //       post: g1['posted']);
-  //
-  //   print(g1['tags']);
-  //   print('${g.tags}');
-  //   await get_first_img();
-  // }
 
   Future<Image> get_first_img(String gid, String gtoken) async {
     var html = await requestGalleryData(gid, gtoken);
@@ -276,6 +256,7 @@ class _GalleryPageState extends State<GalleryPage> {
       cache!,
       key: ValueKey(1),
       fit: BoxFit.contain,
+      height: 400,
     );
   }
 }

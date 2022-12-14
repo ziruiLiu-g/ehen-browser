@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/getwidget.dart';
 
+import '../common/const.dart';
 import '../controller/theme_controller.dart';
+import '../localdb/local_storage.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -26,7 +28,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
   );
 
   late Animation<double> animation =
-  CurvedAnimation(parent: controller, curve: Curves.linear);
+      CurvedAnimation(parent: controller, curve: Curves.linear);
 
   bool isShowLoader = false;
 
@@ -55,12 +57,9 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery
-        .of(context)
-        .size
-        .width / 3;
+    double size = MediaQuery.of(context).size.width / 3;
     return Container(
-      color: ThemeController.isLightTheme ? Colors.white : Colors.black,
+      color: galleryStartPageBgColor(!Get.isDarkMode),
       child: Center(
         child: SizedBox(
           child: Stack(
@@ -71,19 +70,15 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                 controller: controller,
                 type: GFAnimationType.scaleTransition,
                 alignment: Alignment.center,
-                child: Obx(
-                      () =>
-                      Text(
-                        "EhBrowser",
-                        style: TextStyle(
-                          color: ThemeController.isLightTheme
-                              ? primary
-                              : Colors.white,
-                          fontSize: size / 4,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
+                child: Text(
+                  "EhBrowser",
+                  style: TextStyle(
+                    color:
+                    galleryPageButtonColor(!Get.isDarkMode),
+                    fontSize: size / 4,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.none,
+                  ),
                 ),
               ),
             ],

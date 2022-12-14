@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
+import '../common/const.dart';
 import '../controller/theme_controller.dart';
 import '../util/color.dart';
 
@@ -18,8 +19,7 @@ class _LoadingAnimationState extends State<LoadingAnimation> {
     return Obx(() => CircularProgressIndicator(
       semanticsValue: "Loading..",
       strokeWidth: 3,
-      color:
-      ThemeController.isLightTheme ? primary : Colors.white60,
+      color:  loadingCircleColr(ThemeController.isLightTheme),
     ));
   }
 }
