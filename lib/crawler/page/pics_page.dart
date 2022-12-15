@@ -87,14 +87,15 @@ class _PicsPageState extends State<PicsPage> {
                       ? Container(
                           height: 50,
                           alignment: Alignment.center,
-                          child: Obx(() => Text(
-                                'Scroll up to load more ~',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: picsLoadHintColor(
-                                      ThemeController.isLightTheme),
-                                ),
-                              )),
+                          child: LoadingAnimation(),
+                          // child: Obx(() => Text(
+                          //       'Scroll up to load more ~',
+                          //       style: TextStyle(
+                          //         fontSize: 12,
+                          //         color: picsLoadHintColor(
+                          //             ThemeController.isLightTheme),
+                          //       ),
+                          //     )),
                         )
                       : Container(
                           height: 50,

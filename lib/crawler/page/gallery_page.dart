@@ -247,6 +247,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   get_detail_row(String fieldName, String field) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 100,
@@ -258,13 +259,13 @@ class _GalleryPageState extends State<GalleryPage> {
             ),
           ),
         ),
-        Text(
+        Expanded(child: Text(
           '$field',
           style: TextStyle(
             fontSize: 15,
             color: galleryTitleColor(ThemeController.isLightTheme),
           ),
-        )
+        ))
       ],
     );
   }
@@ -279,7 +280,8 @@ class _GalleryPageState extends State<GalleryPage> {
     return Image.memory(
       cache!,
       key: ValueKey(1),
-      fit: BoxFit.contain,
+      // fit: BoxFit.fitHeight,
+      // height: 400,
     );
   }
 }
