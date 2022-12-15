@@ -23,12 +23,13 @@ class Global {
     await LocalStorage.initSP();
     _logger.i('Global init SharedPreferences.');
 
-
-    ThemeController.initTheme();
-
     if (LocalStorage.getbool(THEME_IS_LIGHT_KEY) == null) {
       LocalStorage.savebool(THEME_IS_LIGHT_KEY, true);
     }
+
+    ThemeController.initTheme();
+
+
 
     _logger.i('App start with theme: ${LocalStorage.getbool(THEME_IS_LIGHT_KEY)
         ? ThemeMode.light

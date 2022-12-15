@@ -63,9 +63,8 @@ class _GalleryPageState extends State<GalleryPage> {
         actions: <Widget>[DarkModeSwitch()],
       ),
       body: Container(
-        width: 400,
-        padding: EdgeInsets.only(top: 20),
-        margin: EdgeInsets.symmetric(horizontal: 20),
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
         child: ListView(
           children: get_gallery_body(),
         ),
@@ -130,12 +129,16 @@ class _GalleryPageState extends State<GalleryPage> {
           ),
         ),
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height:30),
       get_gallery_details(),
       const SizedBox(height: 20),
-      Column(
-        children: get_tags_details(),
-      ),
+      Container(
+        // color: Colors.red,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: get_tags_details(),
+        ),
+      )
     ];
   }
 
@@ -192,7 +195,6 @@ class _GalleryPageState extends State<GalleryPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(3.0),
-                  // color: Color(hexOfRGBA(226, 225, 210)),
                   border: Border.all(width: 2.0, color: Colors.grey),
                 ),
                 height: 25,
@@ -228,15 +230,12 @@ class _GalleryPageState extends State<GalleryPage> {
               ),
             ),
           ),
-          Container(
-            width: 290,
-            alignment: Alignment.topLeft,
+          Expanded(
             child: Wrap(
-              spacing: 10,
-              runSpacing: 6,
-              children: tagButton,
-            ),
-          ),
+            spacing: 10,
+            runSpacing: 6,
+            children: tagButton,
+          ),)
         ],
       );
 
@@ -281,7 +280,6 @@ class _GalleryPageState extends State<GalleryPage> {
       cache!,
       key: ValueKey(1),
       fit: BoxFit.contain,
-      height: 400,
     );
   }
 }

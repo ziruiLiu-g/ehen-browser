@@ -285,14 +285,14 @@ class _XhenState extends State<Xhen> {
           ),
           const SizedBox(width: 25),
           SizedBox(
-            // color: Colors.yellow,
+            width: MediaQuery.of(context).size.width - 180,
             height: 130,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                    width: 250,
+                    // width: 100,
                     child: Obx(
                       () => Text(
                         '${g.title}  (${g.image_count}P)',
@@ -316,7 +316,7 @@ class _XhenState extends State<Xhen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Container(
-                  width: 250,
+                  // width: 250,
                   child: Text(
                     'Artist: ${g.tags['artist']?.join(',')}',
                     // maxLines: 3,
