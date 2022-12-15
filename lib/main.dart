@@ -12,6 +12,7 @@ import 'crawler/common/global.dart';
 import 'crawler/controller/theme_controller.dart';
 import 'crawler/page/gallery_page.dart';
 import 'crawler/page/index.dart';
+import 'crawler/page/pics_page.dart';
 import 'crawler/util/color.dart';
 
 void main() {
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
           child: child,
         ),
       ),
+      // home: PicsPage(50),
       home: FutureBuilder<dynamic>(
           future: loadingPageTimer(),
           builder: (context, snapshot) {
@@ -54,9 +56,7 @@ class MyApp extends StatelessWidget {
                 key: ValueKey(1),
               );
             } else {
-              child = const Xhen(
-                key: ValueKey(0),
-              );
+              child = Xhen();
             }
             return AnimatedSwitcher(
               duration: Duration(seconds: 3),

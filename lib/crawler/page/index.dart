@@ -19,10 +19,13 @@ import '../model/gallery_object.dart';
 import '../widget/gallery_card.dart';
 
 class Xhen extends StatefulWidget {
-  const Xhen({Key? key}) : super(key: key);
+
+  String? sear = '';
 
   @override
   State<Xhen> createState() => _XhenState();
+
+  Xhen({this.sear});
 }
 
 class _XhenState extends State<Xhen> {
@@ -39,6 +42,7 @@ class _XhenState extends State<Xhen> {
 
   @override
   void initState() {
+    search = widget.sear;
     super.initState();
   }
 
@@ -52,15 +56,13 @@ class _XhenState extends State<Xhen> {
           children: [
             ehenAppBar((text) async {
               next = '';
-              // await _searchGallerys(false);
               setState(() {});
             }, () async {
               next = '';
-              // await _searchGallerys(false);
               setState(() {});
             }, (text) {
               search = text;
-            }),
+            }, searBarText: search),
             Container(
               height: 40,
               margin: EdgeInsets.only(top: 4),
@@ -75,12 +77,19 @@ class _XhenState extends State<Xhen> {
       body: FutureBuilder<dynamic>(
         future: _searchGallerys(false),
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.waiting) {
-            return _buildMainContent();
+          Widget child;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            child = Container(
+              alignment: Alignment.center,
+              child: LoadingAnimation(),
+            );
+          } else {
+            child = _buildMainContent();
           }
-          return Container(
-            alignment: Alignment.center,
-            child: LoadingAnimation(),
+
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            child: child,
           );
         },
       ),
@@ -111,13 +120,6 @@ class _XhenState extends State<Xhen> {
     prev = getGalleryPrevPage(htmlDoc);
     beforeDate = null;
     isInit = false;
-
-    // scrollController.animateTo(
-    //   0,
-    //   duration: Duration(milliseconds: 600),
-    //   curve: Curves.fastOutSlowIn,
-    // );
-
     return 1;
   }
 

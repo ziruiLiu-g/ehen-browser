@@ -12,7 +12,7 @@ import 'switch_dark.dart';
 MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
 
 ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack,
-    Function(String) inputCallBack) {
+    Function(String) inputCallBack, {String? searBarText}) {
   return AppBar(
     titleSpacing: 0,
     elevation: 0,
@@ -28,7 +28,7 @@ ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack,
                 searchIconCallBack: searchIconCallBack,
                 onSubmitted: searchCallBack,
                 inputCallBack: inputCallBack,
-                hint: "Use single space to search multiple.",
+                defaultSearch: searBarText ?? "Use single space to search multiple.",
               ),
             ],
           ),

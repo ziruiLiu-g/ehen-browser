@@ -47,6 +47,8 @@ class EhenSearchBar extends StatefulWidget {
 
   Function(String text)? inputCallBack;
 
+  String defaultSearch;
+
   ///搜索框的高度
   double height;
 
@@ -67,7 +69,8 @@ class EhenSearchBar extends StatefulWidget {
       this.isShowBackButton = false,
       this.searchIconCallBack,
       this.inputCallBack,
-      this.height = 35});
+      this.height = 35,
+      this.defaultSearch = ''});
 
   @override
   State createState() {
@@ -78,9 +81,6 @@ class EhenSearchBar extends StatefulWidget {
 class SearchTextFieldBarState extends State<EhenSearchBar> {
   static MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
   static double width = mediaQuery.size.width;
-
-
-
   ///为true 时显示清除选项
   bool showClear = false;
 
@@ -91,6 +91,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
   void initState() {
     super.initState();
 
+    defaultTextController.text = widget.defaultSearch;
     ///创建默认的焦点控制
     widget.focusNode ??= FocusNode();
   }
@@ -219,6 +220,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
   ///构建搜索输入TextField
   TextField buildTextField() {
     return TextField(
+
       ///设置键盘的类型
       keyboardType: TextInputType.text,
 
@@ -308,7 +310,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       return IconButton(
         icon: Icon(
           Icons.clear,
-          size: 24.0,
+          size: 20.0,
           color: Color(0xffacacac),
         ),
         onPressed: () {

@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehentai_browser/crawler/model/gallery_object.dart';
+import 'package:ehentai_browser/crawler/page/index.dart';
+import 'package:ehentai_browser/crawler/page/pics_page.dart';
 import 'package:ehentai_browser/crawler/util/ehentai_crawler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:logger/logger.dart';
 
 import '../common/const.dart';
 import '../controller/theme_controller.dart';
@@ -27,6 +30,8 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<GalleryPage> {
+  static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
+
   var scrollController = ScrollController();
 
   late Gallery g;
@@ -67,13 +72,15 @@ class _GalleryPageState extends State<GalleryPage> {
       ),
       bottomNavigationBar: Obx(
         () => InkWell(
-          onTap: () {},
+          onTap: () {
+            Get.to(PicsPage(widget.g, 0));
+          },
           child: Container(
             height: 60,
             color: themeColor(ThemeController.isLightTheme),
             alignment: Alignment.center,
             child: const Text(
-              "Read",
+              "READ",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -96,13 +103,15 @@ class _GalleryPageState extends State<GalleryPage> {
           builder: (context, snapshot) {
             Widget child;
             if (snapshot.connectionState == ConnectionState.waiting) {
-              child = const LoadingAnimation(key: ValueKey(1),);
+              child = const LoadingAnimation(
+                key: ValueKey(1),
+              );
             } else {
               child = snapshot.data!;
             }
 
             return AnimatedSwitcher(
-              duration: Duration(seconds: 1),
+              duration: Duration(milliseconds: 500),
               child: child,
             );
           },
@@ -151,7 +160,7 @@ class _GalleryPageState extends State<GalleryPage> {
           const SizedBox(
             height: 8,
           ),
-          get_detail_row('Posted Date', '${widget.g.post}'),
+          get_detail_row('Posted on', '${widget.g.post}'),
           const SizedBox(
             height: 10,
           ),
@@ -169,31 +178,45 @@ class _GalleryPageState extends State<GalleryPage> {
 
       List<Widget> tagButton = [];
       for (var tb in tlist!) {
-        tagButton.add(InkWell(
-          onTap: () {},
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3.0),
-              color: Color(hexOfRGBA(226, 225, 210)),
-              border: Border.all(width: 2.0, color: Colors.grey),
+        tagButton.add(
+          Ink(
+            color: Color(hexOfRGBA(226, 225, 210)),
+            child: InkWell(
+              // splashFactory: InkRipple.splashFactory,
+              splashColor: Colors.grey,
+              onTap: () {
+                Get.to(Xhen(
+                  sear: tb,
+                ));
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(3.0),
+                  // color: Color(hexOfRGBA(226, 225, 210)),
+                  border: Border.all(width: 2.0, color: Colors.grey),
+                ),
+                height: 25,
+                padding:
+                const EdgeInsets.only(top: 2, bottom: 2, left: 6, right: 6),
+                child: Text(
+                  tb,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 13,
+                      decoration: TextDecoration.none),
+                ),
+              ),
             ),
-            height: 20,
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Text(
-              tb,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
-                  decoration: TextDecoration.none),
-            ),
-          ),
-        ));
+          )
+        );
       }
 
       var r = Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
+            alignment: Alignment.topLeft,
             width: 100,
             child: Obx(
               () => Text(
@@ -251,6 +274,8 @@ class _GalleryPageState extends State<GalleryPage> {
     var html = await requestGalleryData(gid, gtoken);
     String hdPic = get_Gallery_Show_Img(html);
     var cache = await downloadImageBytes(hdPic);
+
+    widget.g.maxPage = get_Max_Page(html);
 
     return Image.memory(
       cache!,

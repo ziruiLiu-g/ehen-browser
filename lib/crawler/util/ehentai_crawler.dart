@@ -11,6 +11,7 @@ import '../xhenhttp/dao/xhen_dao.dart';
 var header = {
   'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) ' +
       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
+  "Keep-Alive": "timeout=8"
 };
 
 const XHENTAIL_PREFIX = 'https://e-hentai.org/?';
@@ -110,11 +111,18 @@ String get_Gallery_Show_Img(html) {
   return img;
 }
 
-String? get_Max_Page(html) {
+int get_Max_Page(html) {
   Document document = parse(html);
   // use css selector
-  print(
-      '${document.querySelectorAll('body > div:last-child > table > tbody > tr > td:last-child')}');
+
+  List<Element> gl =
+      document.querySelectorAll("table.ptt > tbody > tr > td > a");
+
+  if (gl.length > 1) {
+    return int.parse(gl[gl.length - 2].nodes[0].text!);
+  }
+
+  return int.parse(gl[gl.length - 1].nodes[0].text!);
 }
 
 Future<Document> loadGallerysHtml(
@@ -167,7 +175,7 @@ getGalleryList(Document doc, {List<Gallery>? list}) async {
   var jresult = jsonDecode(result)['gmetadata'];
   if (jresult == null || jresult == '') {
     glist.clear();
-    return;
+    return glist;
   }
   for (int gindex = 0; gindex < jresult.length; gindex++) {
     Gallery gl = Gallery(gplist[gindex][0], gplist[gindex][1],
@@ -181,4 +189,46 @@ getGalleryList(Document doc, {List<Gallery>? list}) async {
     glist.add(gl);
   }
   return glist;
+}
+
+Future<String> requestPicsData(String gid, String token, int page) async {
+  var url = XHENTAIL_GALLERY_PREFIX;
+  url += '${gid}/${token}/?p=${page}';
+
+  var response = await http.get(Uri.parse(url), headers: header);
+  if (response.statusCode == 200) {
+    return response.body;
+  }
+  return '<html>error! status:${response.statusCode}</html>';
+}
+
+Future<List<String>> get_page_pics(String gid, String gtoken, int page) async {
+  String html = await requestPicsData(gid, gtoken, page);
+  Document document = parse(html);
+
+  List<Element> gl = document.querySelectorAll("#gdt > div > div > a");
+  List<String> data = [];
+  if (gl.isNotEmpty) {
+    data = List.generate(gl.length, (i) {
+      return gl[i].attributes['href']!;
+    });
+  }
+
+  return data;
+}
+
+Future<String> get_img(String url) async {
+  var response = await http
+      .get(Uri.parse(url), headers: header)
+      .timeout(const Duration(milliseconds: 5000));
+  String html = response.body;
+  Document document = parse(html);
+
+  List<Element> gl = document.querySelectorAll("#img");
+
+  if (gl.isNotEmpty) {
+    return gl[0].attributes['src']!;
+  }
+
+  return '';
 }

@@ -26,6 +26,10 @@ class Global {
 
     ThemeController.initTheme();
 
+    if (LocalStorage.getbool(THEME_IS_LIGHT_KEY) == null) {
+      LocalStorage.savebool(THEME_IS_LIGHT_KEY, true);
+    }
+
     _logger.i('App start with theme: ${LocalStorage.getbool(THEME_IS_LIGHT_KEY)
         ? ThemeMode.light
         : ThemeMode.dark }');

@@ -11,6 +11,7 @@ class Gallery {
   String? rating = '';
   String? post = '';
   String? hdImgUrl = '';
+  int? maxPage;
 
   Gallery(
       this.gid,
@@ -23,6 +24,7 @@ class Gallery {
       this.rating,
       String post = '0',
       this.hdImgUrl,
+      this.maxPage
       }) {
     var time = DateTime.fromMillisecondsSinceEpoch(int.parse(post) * 1000);
     this.post = '${time.year}-${time.month}-${time.day} ${time.hour}:${time.minute}:${time.second}';

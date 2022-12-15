@@ -28,8 +28,9 @@ class _GalleryCardState extends State<GalleryCard> {
   Widget build(BuildContext context) {
     return Obx(() =>
         InkWell(
+          splashFactory: InkRipple.splashFactory,
           highlightColor: themeColor(ThemeController.isLightTheme),
-          splashColor: ThemeController.isLightTheme ? primary : Colors.grey,
+          splashColor: themeColor(ThemeController.isLightTheme),
           onTap: () {
             Gallery g = widget.g;
             Get.to(() => GalleryPage(g));

@@ -21,6 +21,10 @@ galleryStartPageBgColor(bool x) {
   return x ? Colors.white : Colors.black;
 }
 
+picsLoadHintColor(bool x) {
+  return x ? primary : Colors.grey;
+}
+
 loadingCircleColr(bool x) {
   return x ?primary : Colors.white60;
 }
