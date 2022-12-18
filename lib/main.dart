@@ -4,6 +4,7 @@ import 'package:ehentai_browser/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+
 import 'common/const.dart';
 import 'common/global.dart';
 import 'page/home/home.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: primary,
       ),
-      themeMode:  (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool) ? ThemeMode.light : ThemeMode.dark,
+      themeMode: (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool) ? ThemeMode.light : ThemeMode.dark,
       builder: (context, child) => Scaffold(
         // Global GestureDetector that will dismiss the keyboard
         body: GestureDetector(
@@ -60,9 +61,8 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  loadingPageTimer() async {
-    await Future.delayed(Duration(milliseconds: 1500), () {
-    });
+  Future<dynamic> loadingPageTimer() async {
+    await Future.delayed(Duration(milliseconds: 1500), () {});
   }
 
   void hideKeyboard(BuildContext context) {

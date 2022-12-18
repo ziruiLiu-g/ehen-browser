@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_error.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_net_adaptor.dart';
 import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
-import 'package:dio/dio.dart';
 
 class DioAdaptor extends HiNetAdapter {
   @override
@@ -36,13 +36,12 @@ class DioAdaptor extends HiNetAdapter {
     return buildRes(response, request);
   }
 
-  Future<HiNetResponse<T>> buildRes<T> (Response? response, BaseRequest request) {
+  Future<HiNetResponse<T>> buildRes<T>(Response? response, BaseRequest request) {
     return Future.value(HiNetResponse(
         data: response?.data,
         request: request,
         statusCode: response?.statusCode,
         statusMessage: response?.statusMessage,
-        extra: response
-    ));
+        extra: response));
   }
 }

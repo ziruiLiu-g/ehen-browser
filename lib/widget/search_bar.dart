@@ -81,6 +81,7 @@ class EhenSearchBar extends StatefulWidget {
 class SearchTextFieldBarState extends State<EhenSearchBar> {
   static MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
   static double width = mediaQuery.size.width;
+
   ///为true 时显示清除选项
   bool showClear = false;
 
@@ -92,6 +93,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
     super.initState();
 
     defaultTextController.text = widget.defaultSearch;
+
     ///创建默认的焦点控制
     widget.focusNode ??= FocusNode();
   }
@@ -152,7 +154,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       height: widget.height,
 
       ///获取当前StatelessWidget的宽度
-      width: width - 120,
+      width: MediaQuery.of(context).size.width - 140,
 
       ///对齐方式
       alignment: Alignment.center,
@@ -185,7 +187,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
             alignment: Alignment.centerRight,
             width: 32,
             child: Obx(
-                  () => Icon(
+              () => Icon(
                 Icons.search,
                 color: ThemeController.isLightTheme ? primary : darkPrimary,
                 size: 25.0,
@@ -220,7 +222,6 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
   ///构建搜索输入TextField
   TextField buildTextField() {
     return TextField(
-
       ///设置键盘的类型
       keyboardType: TextInputType.text,
 
@@ -231,8 +232,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       keyboardAppearance: Brightness.dark,
 
       ///控制器配置
-      controller:
-          widget.controller ?? defaultTextController,
+      controller: widget.controller ?? defaultTextController,
 
       ///最大行数
       maxLines: 1,
@@ -275,10 +275,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
       autofocus: false,
       focusNode: widget.focusNode,
 
-      style: TextStyle(
-          fontSize: widget.fontSize,
-          color: Colors.black54,
-          fontWeight: FontWeight.w300),
+      style: TextStyle(fontSize: widget.fontSize, color: Colors.black54, fontWeight: FontWeight.w300),
 
       ///输入框的边框装饰
       decoration: InputDecoration(

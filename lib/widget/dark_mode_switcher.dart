@@ -22,16 +22,14 @@ class _DarkModeSwitchState extends State<DarkModeSwitch> {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        await LocalStorage.getInstance().setBool(
-            THEME_IS_LIGHT_KEY, Get.isDarkMode ? true : false);
+        await LocalStorage.getInstance().setBool(THEME_IS_LIGHT_KEY, Get.isDarkMode ? true : false);
         Get.changeThemeMode(
           Get.isDarkMode ? ThemeMode.light : ThemeMode.dark,
         );
         ThemeController.setIsLightTheme(Get.isDarkMode);
       },
       icon: Obx(
-        () => Icon(
-            ThemeController.isLightTheme ? Icons.sunny : Icons.nights_stay),
+        () => Icon(ThemeController.isLightTheme ? Icons.sunny : Icons.nights_stay),
       ),
       color: Colors.white,
     );

@@ -1,22 +1,14 @@
-import 'dart:convert';
-
-import 'package:ehentai_browser/page/gallery_page.dart';
-import 'package:ehentai_browser/page/startPage.dart';
-import 'package:ehentai_browser/util/color.dart';
-import 'package:ehentai_browser/widget/app_bar_ehen.dart';
-import 'package:ehentai_browser/widget/cata_widget.dart';
 import 'package:ehentai_browser/page/home/widget/multi_cata_check.dart';
+import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:ehentai_browser/widget/loading_animation.dart';
-import 'package:ehentai_browser/xhenhttp/dao/xhen_dao.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../common/const.dart';
 import '../../controller/theme_controller.dart';
-import '../../localdb/local_storage.dart';
-import '../../navigator/ehen_navigator.dart';
-import '../../util/ehentai_crawler.dart';
 import '../../model/gallery_model.dart';
+import '../../util/ehentai_crawler.dart';
 import 'widget/gallery_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,11 +24,11 @@ class _HomePageState extends State<HomePage> {
   var scrollController = ScrollController();
   late List<GalleryModel> glist = [];
 
-  var prev;
-  var next;
-  var search;
-  var cata;
-  var beforeDate;
+  String? prev;
+  String? next;
+  String? search;
+  String? cata;
+  String? beforeDate;
   var listener;
 
   var isInit = true;
@@ -46,15 +38,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     search = widget.sear;
-    EhenNavigator.getInstance().addListener(this.listener = (current, pre) {
-      print('home:current: ${current.page}');
-      print('home:prev: ${pre.page}');
-      if (widget == current.page || current.page is HomePage) {
-        print('Open the Home Page, onResume');
-      } else if (widget == pre?.page || pre?.page is HomePage) {
-        print('Home page, onPause');
-      }
-    });
   }
 
   @override
@@ -107,7 +90,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _buildMainContent() {
+  Widget _buildMainContent() {
     return SingleChildScrollView(
       controller: scrollController,
       padding: EdgeInsets.only(left: 20, right: 20),
@@ -116,7 +99,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 后端加载
-  _searchGallerys(bool isPrev, {List<GalleryModel>? list}) async {
+  Future<int> _searchGallerys(bool isPrev, {List<GalleryModel>? list}) async {
     var htmlDoc = await loadGallerysHtml(isPrev, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
@@ -128,7 +111,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 下一页和上一页
-  _nextPrevButton() {
+  Widget _nextPrevButton() {
     return Container(
       height: BOTTOM_BAR_HEIGHT,
       // color: Colors.red,
@@ -252,7 +235,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 日期选择器回调函数， 负责弹窗
-  _date_selector_callback(date, context) async {
+  _date_selector_callback(String date, BuildContext context) async {
     setState(() {
       beforeDate = date;
     });
@@ -260,7 +243,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 获取卡片列表
-  get_gallery_rows_list() {
+  Widget get_gallery_rows_list() {
     Widget content;
     List<Widget> ww = [];
     for (var g in glist) {

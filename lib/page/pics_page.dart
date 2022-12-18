@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,15 +36,14 @@ class _PicsPageState extends State<PicsPage> {
   // 初始化State
   void initState() {
     super.initState();
-    g = Get.arguments['gallery'];
-    
+    g = Get.arguments['gallery'] as GalleryModel;
+
     _scrollController.addListener(() {
       if (curPos == _scrollController.position.pixels) {
         print('wait for current loaded');
         return;
       }
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         curPos = _scrollController.position.pixels;
         getMorePics(); // 当滑到最底部时
       }
@@ -96,8 +96,7 @@ class _PicsPageState extends State<PicsPage> {
                                 'This is the Bottom of the page!!',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: picsLoadHintColor(
-                                      ThemeController.isLightTheme),
+                                  color: picsLoadHintColor(ThemeController.isLightTheme),
                                 ),
                               )),
                         )
@@ -130,7 +129,7 @@ class _PicsPageState extends State<PicsPage> {
   }
 
   // 下一页和上一页
-  _nextPrevButton() {
+  Widget _nextPrevButton() {
     return Container(
       height: 70,
       // color: Colors.red,
@@ -208,7 +207,7 @@ class _PicsPageState extends State<PicsPage> {
     });
   }
 
-  getpics() {
+  FutureOr<dynamic> Function()? getpics() {
     for (int i = curPageNum; i < min(curPageNum + 5, pics.length); i++) {
       loadedUrl.add(FutureBuilder<String>(
         future: get_img(pics[i]),
@@ -217,7 +216,6 @@ class _PicsPageState extends State<PicsPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             child = Container();
           } else {
-
             child = CachedNetworkImage(
               imageUrl: snapshot.data!,
               fit: BoxFit.contain,
@@ -226,8 +224,7 @@ class _PicsPageState extends State<PicsPage> {
             );
           }
 
-          return AnimatedSwitcher(
-              duration: Duration(milliseconds: 500), child: child);
+          return AnimatedSwitcher(duration: Duration(milliseconds: 500), child: child);
         },
       ));
     }
@@ -235,7 +232,6 @@ class _PicsPageState extends State<PicsPage> {
 
   getAllPicsList(String gid, String gtoken, int page) async {
     pics = await get_page_pics(gid, gtoken, page);
-    _logger.i(
-        'Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
+    _logger.i('Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
   }
 }

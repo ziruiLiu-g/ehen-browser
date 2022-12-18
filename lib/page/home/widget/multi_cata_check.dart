@@ -2,6 +2,7 @@ import 'package:ehentai_browser/util/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../controller/cata_controller.dart';
 
 class EhenCheck extends StatefulWidget {
@@ -26,7 +27,7 @@ class _EhenCheckState extends State<EhenCheck> {
     );
   }
 
-  _createAllChecks() {
+  Widget _createAllChecks() {
     Widget content;
     List<Widget> ww = [];
     for (var k in ctaController.cataCheck.keys) {
@@ -44,18 +45,17 @@ class _EhenCheckState extends State<EhenCheck> {
     return content;
   }
 
-  _buildCheckBox(key, values) {
+  Widget _buildCheckBox(key, values) {
     return Obx(() => InkWell(
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
-          key: Key(key),
+          key: Key(key.toString()),
           onTap: () {
             var curKey = key.toString();
             Map<String, Object?>? curNum = cataMap[curKey];
             var checkValue = (curNum!['value'] as int?)!;
             ctaController.changeCheck(curKey);
-            ctaController.updateNum(
-                ctaController.cataCheck[curKey]! ? 0 - checkValue : checkValue);
+            ctaController.updateNum(ctaController.cataCheck[curKey]! ? 0 - checkValue : checkValue);
 
             widget.getCataFunc(ctaController.cataNum);
           },
@@ -65,16 +65,14 @@ class _EhenCheckState extends State<EhenCheck> {
             //设置了 decoration 就不能设置color，两者只能存在一个
             decoration: BoxDecoration(
                 color: ctaController.cataCheck[key.toString()]!
-                    ? values['activeColor']
-                    : values['checkColor'],
+                    ? values['activeColor'] as Color
+                    : values['checkColor'] as Color,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(width: 2.0, color: Colors.grey)),
             child: Text(
-              key,
+              key.toString(),
               style: TextStyle(
-                color: ctaController.cataCheck[key.toString()]!
-                    ? Colors.white
-                    : Colors.grey,
+                color: ctaController.cataCheck[key.toString()]! ? Colors.white : Colors.grey,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.none,
