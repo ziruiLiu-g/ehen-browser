@@ -16,6 +16,7 @@ import '../navigator/ehen_navigator.dart';
 import '../util/color.dart';
 import '../util/image_save_load.dart';
 import '../widget/cata_widget.dart';
+import '../widget/full_screen_photo.dart';
 import '../widget/loading_animation.dart';
 import '../widget/dark_mode_switcher.dart';
 
@@ -28,7 +29,7 @@ class _GalleryPageState extends State<GalleryPage> {
   static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
   var scrollController = ScrollController();
   late GalleryModel g;
-  var cover;
+  late var cover;
 
   @override
   void initState() {
@@ -67,13 +68,13 @@ class _GalleryPageState extends State<GalleryPage> {
             Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
           },
           child: Container(
-            height: 60,
+            height: BOTTOM_BAR_HEIGHT,
             color: themeColor(ThemeController.isLightTheme),
             alignment: Alignment.center,
             child: const Text(
               "READ",
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -98,7 +99,13 @@ class _GalleryPageState extends State<GalleryPage> {
                 key: ValueKey(1),
               );
             } else {
-              child = snapshot.data!;
+              child = InkWell(
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (BuildContext context) => TapablePhoto(cover),
+                ),
+                child: snapshot.data!,
+              );
             }
 
             return AnimatedSwitcher(
@@ -264,8 +271,8 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Future<Image> get_first_img(String gid, String gtoken) async {
     var html = await requestGalleryData(gid, gtoken);
-    String hdPic = get_Gallery_Show_Img(html);
-    var cache = await downloadImageBytes(hdPic);
+    cover = get_Gallery_Show_Img(html);
+    var cache = await downloadImageBytes(cover);
 
     g.maxPage = get_Max_Page(html);
 

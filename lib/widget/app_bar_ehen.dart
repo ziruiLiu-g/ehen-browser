@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:ehentai_browser/widget/search_bar.dart';
 import 'package:flutter/material.dart';
+import '../common/const.dart';
 import 'dark_mode_switcher.dart';
 
 MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
@@ -12,7 +13,6 @@ ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack,
     elevation: 0,
     actions: <Widget>[DarkModeSwitch()],
     title: SizedBox(
-      height: 75,
       child: Column(
         children: [
           Row(

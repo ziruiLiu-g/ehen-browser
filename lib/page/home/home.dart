@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(104.0),
+        preferredSize: Size.fromHeight(96.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -76,7 +76,6 @@ class _HomePageState extends State<HomePage> {
             }, searBarText: search),
             Container(
               height: 40,
-              margin: EdgeInsets.only(top: 4),
               alignment: Alignment.center,
               child: EhenCheck((cataNum) {
                 cata = '$cataNum';
@@ -131,7 +130,7 @@ class _HomePageState extends State<HomePage> {
   // 下一页和上一页
   _nextPrevButton() {
     return Container(
-      height: 70,
+      height: BOTTOM_BAR_HEIGHT,
       // color: Colors.red,
       alignment: Alignment.topCenter,
       child: Row(
