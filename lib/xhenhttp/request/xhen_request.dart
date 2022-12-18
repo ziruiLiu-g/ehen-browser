@@ -1,4 +1,3 @@
-
 import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
 
 class XhenRequest extends BaseRequest {
@@ -11,5 +10,4 @@ class XhenRequest extends BaseRequest {
   String path() {
     return '/api.php';
   }
-
 }

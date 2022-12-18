@@ -1,7 +1,3 @@
-
-
-import 'dart:convert';
-
 import 'package:ehentai_browser/xhenhttp/core/hi_net.dart';
 import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
 
@@ -20,13 +16,9 @@ class XhenDao {
     BaseRequest request;
     request = XhenRequest();
 
-    request
-        .add("method", "gdata")
-        .add("gidlist", list)
-        .add("namespace", 1);
+    request.add("method", "gdata").add("gidlist", list).add("namespace", 1);
 
     var result = await HiNet.getInstace().fire(request);
-
 
     return result;
   }
@@ -35,12 +27,9 @@ class XhenDao {
     BaseRequest request;
     request = XhenRequest();
 
-    request
-        .add("method", "gtoken")
-        .add("pagelist", list);
+    request.add("method", "gtoken").add("pagelist", list);
 
     var result = await HiNet.getInstace().fire(request);
-
 
     return result;
   }

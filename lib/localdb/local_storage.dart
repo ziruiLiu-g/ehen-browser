@@ -14,7 +14,7 @@ class LocalStorage {
   static Future<LocalStorage> preInit() async {
     if (_instance == null) {
       var prefs = await SharedPreferences.getInstance();
-      _instance=LocalStorage._pre(prefs);
+      _instance = LocalStorage._pre(prefs);
     }
 
     return _instance!;
@@ -22,7 +22,7 @@ class LocalStorage {
 
   static LocalStorage getInstance() {
     _instance ??= LocalStorage._();
-    return  _instance!;
+    return _instance!;
   }
 
   void init() async {
@@ -56,5 +56,4 @@ class LocalStorage {
   Object? get<T>(String key) {
     return prefs?.get(key);
   }
-
 }

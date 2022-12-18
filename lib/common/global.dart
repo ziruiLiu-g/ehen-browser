@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:logger/logger.dart';
+
 import 'const.dart';
 
 class Global {
@@ -28,8 +29,7 @@ class Global {
     // init global controller
     Get.put(ThemeController());
 
-
-    _logger.i('App start with theme: ${(LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool)  ? ThemeMode.light
-        : ThemeMode.dark}');
+    _logger.i(
+        'App start with theme: ${(LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool) ? ThemeMode.light : ThemeMode.dark}');
   }
 }

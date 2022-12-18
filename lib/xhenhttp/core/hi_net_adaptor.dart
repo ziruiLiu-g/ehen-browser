@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
 
 abstract class HiNetAdapter {
-  Future<HiNetResponse<T>> send<T> (BaseRequest request);
+  Future<HiNetResponse<T>> send<T>(BaseRequest request);
 }
 
 class HiNetResponse<T> {
@@ -23,6 +23,4 @@ class HiNetResponse<T> {
 
     return data.toString();
   }
-
-
 }

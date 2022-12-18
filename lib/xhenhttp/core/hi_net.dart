@@ -1,4 +1,3 @@
-
 import 'package:ehentai_browser/xhenhttp/core/dio_adaptor.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_error.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_net_adaptor.dart';
@@ -20,8 +19,8 @@ class HiNet {
     HiNetResponse? response;
     var error;
     try {
-      response  = await send(request);
-    } on HiNetError catch(e) {
+      response = await send(request);
+    } on HiNetError catch (e) {
       error = e;
       response = e.data;
       printLog(e.message);
@@ -30,15 +29,15 @@ class HiNet {
       error = e;
       printLog(e);
     }
-    
+
     if (response == null) {
       printLog("no response");
     }
-   
+
     var result = response?.data;
 
     var status = response?.statusCode;
-    switch(status) {
+    switch (status) {
       case 200:
         return result;
       case 401:

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 import '../model/gallery_model.dart';
@@ -19,12 +19,7 @@ const XHENTAIL_GALLERY_PREFIX = 'https://e-hentai.org/g/';
 
 final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
 
-Future<String> requestData(
-    {String? search,
-    String? cataNum,
-    String? next,
-    String? prev,
-    String? dateBefore}) async {
+Future<String> requestData({String? search, String? cataNum, String? next, String? prev, String? dateBefore}) async {
   var url = XHENTAIL_PREFIX;
   if (cataNum != null && cataNum.isNotEmpty) {
     url += '&f_cats=$cataNum';
@@ -56,7 +51,7 @@ Future<String> requestData(
 }
 
 String? get_next_page_url(document) {
-  List<Element> next = document.querySelectorAll('#unext');
+  List<Element> next = document.querySelectorAll('#unext') as List<Element>;
   String? nextUrl;
   if (next.isNotEmpty) {
     nextUrl = next[0].attributes['href'];
@@ -65,7 +60,7 @@ String? get_next_page_url(document) {
 }
 
 String? get_prev_page_url(document) {
-  List<Element> prev = document.querySelectorAll('#uprev');
+  List<Element> prev = document.querySelectorAll('#uprev') as List<Element>;
   String? prevUrl;
   if (prev.isNotEmpty) {
     prevUrl = prev[0].attributes['href'];
@@ -75,8 +70,8 @@ String? get_prev_page_url(document) {
 
 List<String?> get_gallery_list(document) {
   // use css selector
-  List<Element> gl = document.querySelectorAll(
-      'body > div.ido > div > table > tbody > tr > td.gl3c.glname > a');
+  List<Element> gl =
+      document.querySelectorAll('body > div.ido > div > table > tbody > tr > td.gl3c.glname > a') as List<Element>;
 
   List<String?> data = [];
   if (gl.isNotEmpty) {
@@ -102,9 +97,7 @@ Future<String> requestGalleryData(String gid, String token) async {
 String get_Gallery_Show_Img(html) {
   Document document = parse(html);
   // use css selector
-  String showImgUrls = (document
-      .querySelectorAll('#gd1 > div')[0]
-      .attributes['style'] as String);
+  String showImgUrls = (document.querySelectorAll('#gd1 > div')[0].attributes['style'] as String);
   int firstP = showImgUrls.indexOf("(") + 1;
   int lastP = showImgUrls.indexOf(")");
   var img = showImgUrls.substring(firstP, lastP);
@@ -115,8 +108,7 @@ int get_Max_Page(html) {
   Document document = parse(html);
   // use css selector
 
-  List<Element> gl =
-      document.querySelectorAll("table.ptt > tbody > tr > td > a");
+  List<Element> gl = document.querySelectorAll("table.ptt > tbody > tr > td > a");
 
   if (gl.length > 1) {
     return int.parse(gl[gl.length - 2].nodes[0].text!);
@@ -135,29 +127,27 @@ Future<Document> loadGallerysHtml(
 }) async {
   var html;
   if (isPrev) {
-    html = await requestData(
-        search: search, cataNum: cata, prev: prev, dateBefore: dateBefore);
+    html = await requestData(search: search, cataNum: cata, prev: prev, dateBefore: dateBefore);
   } else {
-    html = await requestData(
-        search: search, cataNum: cata, next: next, dateBefore: dateBefore);
+    html = await requestData(search: search, cataNum: cata, next: next, dateBefore: dateBefore);
   }
 
   return parse(html);
 }
 
-getGalleryNextPage(Document doc) {
+String? getGalleryNextPage(Document doc) {
   var nextUrl = get_next_page_url(doc);
   var next = nextUrl?.substring(nextUrl.lastIndexOf("=") + 1, nextUrl.length);
   return next;
 }
 
-getGalleryPrevPage(Document doc) {
+String? getGalleryPrevPage(Document doc) {
   var prevUrl = get_prev_page_url(doc);
   var prev = prevUrl?.substring(prevUrl.lastIndexOf("=") + 1, prevUrl.length);
   return prev;
 }
 
-getGalleryList(Document doc, {List<GalleryModel>? list}) async {
+Future<List<GalleryModel>> getGalleryList(Document doc, {List<GalleryModel>? list}) async {
   List<GalleryModel> glist = [];
   if (list != null) {
     glist = list;
@@ -171,21 +161,21 @@ getGalleryList(Document doc, {List<GalleryModel>? list}) async {
     gplist.add([gparams![gparams.length - 3], gparams[gparams.length - 2]]);
   }
 
-  var result = await XhenDao.get_gallery(gplist);
+  String result = await XhenDao.get_gallery(gplist) as String;
   var jresult = jsonDecode(result)['gmetadata'];
   if (jresult == null || jresult == '') {
     glist.clear();
     return glist;
   }
   for (int gindex = 0; gindex < jresult.length; gindex++) {
-    GalleryModel gl = GalleryModel(gplist[gindex][0], gplist[gindex][1],
-        imgUrl: jresult[gindex]['thumb'],
-        title: jresult[gindex]['title'],
-        image_count: jresult[gindex]['filecount'],
-        cata: jresult[gindex]['category'],
-        tags: jresult[gindex]['tags'],
-        rating: jresult[gindex]['rating'],
-        post: jresult[gindex]['posted']);
+    GalleryModel gl = GalleryModel(gplist[gindex][0].toString(), gplist[gindex][1].toString(),
+        imgUrl: jresult[gindex]['thumb'].toString(),
+        title: jresult[gindex]['title'].toString(),
+        image_count: jresult[gindex]['filecount'].toString(),
+        cata: jresult[gindex]['category'].toString(),
+        tags: jresult[gindex]['tags'] as List,
+        rating: jresult[gindex]['rating'].toString(),
+        post: jresult[gindex]['posted'].toString());
     glist.add(gl);
   }
   return glist;
@@ -218,9 +208,7 @@ Future<List<String>> get_page_pics(String gid, String gtoken, int page) async {
 }
 
 Future<String> get_img(String url) async {
-  var response = await http
-      .get(Uri.parse(url), headers: header)
-      .timeout(const Duration(milliseconds: 5000));
+  var response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(milliseconds: 5000));
   String html = response.body;
   Document document = parse(html);
 

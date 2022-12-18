@@ -1,0 +1,147 @@
+name: Release ios
+
+on:
+  push:
+    tags:
+      - v*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+
+jobs:
+  Build_and_upload:
+    name: Build releases
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: android
+            os: ubuntu-latest
+            flutter_version: '3.3.9'
+            artifact_name: release-apk
+            artifact_path: build/app/outputs/apk/release/*.apk
+          - target: ios
+            os: macos-12
+            flutter_version: '3.3.9'
+            artifact_name: release-ios
+            artifact_path: build/ios/ipa/*.ipa
+
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      # IOS
+      - name: Install Apple Certificate
+        if: matrix.os == 'macos-12'
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.P12_BASE64 }}
+          p12-password: ${{ secrets.CERT_PASSWORD }}
+
+      - name: Install the provisioning profile
+        if: matrix.os == 'macos-12'
+        env:
+          PROVISIONING_CERTIFICATE_BASE64: ${{ secrets.MOBILEPROVISION_BASE64 }}
+        run: |
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          
+          echo -n "$PROVISIONING_CERTIFICATE_BASE64" | base64 --decode --output $PP_PATH
+          
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      # android
+      - name: Setup Java JDK
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: gradle
+
+      - name: Decode keystore
+        if: matrix.target == 'android'
+        run: echo $ENCODED_KEYSTORE | base64 -di > android/app/keystore.jks
+        env:
+          ENCODED_KEYSTORE: ${{ secrets.ENCODED_KEYSTORE }}
+
+      # Install Flutter
+      - name: Flutter action
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter_version }}
+
+      - name: Restore packages
+        run: flutter pub get
+
+      # Get app version
+      - name: Get app version
+        id: get_version
+        shell: bash
+        run: |
+          echo "::set-output name=version::$(head -n 4 pubspec.yaml | tail -n 1 | cut -d ' ' -f 2)"
+      
+
+      # build Ios
+      - name: Build Flutter
+        if: matrix.target == 'ios'
+        run: flutter build ios --release --no-codesign
+
+      - name: Build resolve Swift dependencies
+        if: matrix.os == 'macos-12'
+        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
+
+      - name: Build xArchive
+        if: matrix.target == 'ios'
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=G7T6T3Z8S2 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=ehenB clean archive CODE_SIGN_IDENTITY="Apple Development: zirui liu (8VH35B2B85)"
+
+      - name: Build Ipa
+        if: matrix.target == 'ios'
+        run: |
+          xcodebuild -exportArchive -archivePath build-output/app.xcarchive -exportPath build/ios/ipa/ -exportOptionsPlist ExportOptions.plist
+          cd build/ios/ipa/
+          mv ehentai_browser.ipa EhenBrowser_${{ steps.get_version.outputs.version }}.ipa
+
+      # build Android
+      - name: Build Apk
+        if: matrix.target == 'android'
+        run: flutter build apk --release
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD}}
+
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+
+
+  Publish_releases:
+    name: Publish releases
+    needs: Build_and_upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/artifacts
+
+      - run: ls -R /tmp/artifacts
+
+      - name: Upload to release
+        uses: ncipollo/release-action@v1.5.0
+        with:
+          artifacts: "/tmp/artifacts/release-apk/*.apk,/tmp/artifacts/release-ios/*.ipa"
+          token: ${{ secrets.RELEASE_TOKEN }}
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          replacesArtifacts: true
