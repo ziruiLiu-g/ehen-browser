@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../common/const.dart';
+import '../../controller/cata_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../../model/gallery_model.dart';
 import '../../util/ehentai_crawler.dart';
@@ -22,6 +23,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var scrollController = ScrollController();
+  final ctaController = Get.put(CataController());
+
   late List<GalleryModel> glist = [];
 
   String? prev;
@@ -29,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   String? search;
   String? cata;
   String? beforeDate;
+  bool? isPrev;
   var listener;
 
   var isInit = true;
@@ -36,7 +40,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
+    cata = '${ctaController.cataNum}';
+    isPrev = false;
     search = widget.sear;
   }
 
@@ -48,10 +53,10 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ehenAppBar((text) async {
+            ehenAppBar((text) {
               next = '';
               setState(() {});
-            }, () async {
+            }, () {
               next = '';
               setState(() {});
             }, (text) {
@@ -68,7 +73,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: FutureBuilder<dynamic>(
-        future: _searchGallerys(false),
+        future: _searchGallerys(),
         builder: (context, snapshot) {
           Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -99,8 +104,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 后端加载
-  Future<int> _searchGallerys(bool isPrev, {List<GalleryModel>? list}) async {
-    var htmlDoc = await loadGallerysHtml(isPrev, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
+  Future<int> _searchGallerys({List<GalleryModel>? list}) async {
+    var htmlDoc = await loadGallerysHtml(isPrev!, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
     next = getGalleryNextPage(htmlDoc);
@@ -131,7 +136,9 @@ class _HomePageState extends State<HomePage> {
             ),
             onPressed: () async {
               // await _searchGallerys(true);
-              setState(() {});
+              setState(() {
+                isPrev = true;
+              });
             },
           ),
           TextButton(
@@ -157,7 +164,9 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             onPressed: () {
-              setState(() {});
+              setState(() {
+                isPrev = false;
+              });
             },
           ),
         ],
