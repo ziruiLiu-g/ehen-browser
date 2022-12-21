@@ -20,21 +20,34 @@ class _BottomBlurNavigatorState extends State<BottomBlurNavigator> {
     return Container(
       height: BOTTOM_BAR_HEIGHT,
       width: MediaQuery.of(context).size.width,
+
       padding: EdgeInsets.only(left: 20, right: 20),
       margin: EdgeInsets.only(bottom: BOTTOM_BLUR_BAR_MARGIN_BOTTOM),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
+        clipBehavior: Clip.hardEdge,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
           child: Container(
             color: Colors.grey.withOpacity(0.4),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: widget.widgets!,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: _getExpandedWidget(),
             ),
           ),
         ),
       ),
     );
+  }
+
+  _getExpandedWidget() {
+    List<Expanded> le = [];
+    for (var e in widget.widgets!) {
+      le.add(Expanded(
+          child: e
+      ));
+    }
+
+    return le;
   }
 }
