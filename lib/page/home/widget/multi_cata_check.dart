@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:ehentai_browser/util/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +22,16 @@ class _EhenCheckState extends State<EhenCheck> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 5),
       alignment: Alignment.center,
       height: 30.0,
-      child: _createAllChecks(),
+      child:  Container(
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+            child: _createAllChecks(),
+          ),
+        ),
+      ),
     );
   }
 

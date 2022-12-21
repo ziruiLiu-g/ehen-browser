@@ -7,7 +7,7 @@ import 'dark_mode_switcher.dart';
 
 MediaQueryData mediaQuery = MediaQueryData.fromWindow(window);
 
-Widget ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack, Function(String) inputCallBack,
+ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack, Function(String) inputCallBack,
     {String? searBarText}) {
   return AppBar(
     // titleSpacing: 0,

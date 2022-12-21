@@ -1,5 +1,7 @@
+import 'package:ehentai_browser/page/home/widget/gallery_flutter_card.dart';
 import 'package:ehentai_browser/page/home/widget/multi_cata_check.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
+import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../common/const.dart';
 import '../../controller/cata_controller.dart';
+import '../../controller/home_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../../model/gallery_model.dart';
 import '../../util/ehentai_crawler.dart';
@@ -22,8 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var scrollController = ScrollController();
   final ctaController = Get.put(CataController());
+  final homeController = Get.put(HomeController());
 
   late List<GalleryModel> glist = [];
 
@@ -33,8 +36,6 @@ class _HomePageState extends State<HomePage> {
   String? cata;
   String? beforeDate;
   bool? isPrev;
-  var listener;
-
   var isInit = true;
 
   @override
@@ -48,64 +49,76 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(96.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ehenAppBar((text) {
-              next = '';
-              setState(() {});
-            }, () {
-              next = '';
-              setState(() {});
-            }, (text) {
-              search = text;
-            }, searBarText: search),
-            Container(
-              height: 40,
-              alignment: Alignment.center,
-              child: EhenCheck((cataNum) {
+      appBar: ehenAppBar((text) {
+        next = '';
+        setState(() {});
+      }, () {
+        next = '';
+        setState(() {});
+      }, (text) {
+        search = text;
+      }, searBarText: search),
+      body: Stack(
+        children: [
+          FutureBuilder<dynamic>(
+              future: _searchGallerys(),
+              builder: (context, snapshot) {
+                Widget child;
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  child = Container(
+                    alignment: Alignment.center,
+                    child: LoadingAnimation(),
+                  );
+                } else {
+                  child = _buildMainContent();
+                }
+
+                return child;
+              }),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              EhenCheck((cataNum) {
                 cata = '$cataNum';
               }),
-            ),
-          ],
-        ),
+              _nextPrevButton(),
+            ],
+          )
+        ],
       ),
-      body: FutureBuilder<dynamic>(
-        future: _searchGallerys(),
-        builder: (context, snapshot) {
-          Widget child;
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            child = Container(
-              alignment: Alignment.center,
-              child: LoadingAnimation(),
-            );
-          } else {
-            child = _buildMainContent();
-          }
-
-          return AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
-            child: child,
-          );
-        },
-      ),
-      bottomNavigationBar: _nextPrevButton(),
     );
   }
 
-  Widget _buildMainContent() {
-    return SingleChildScrollView(
-      controller: scrollController,
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: get_gallery_rows_list(),
+  _buildMainContent() {
+    homeController.galleryVisible = true;
+    return Obx(
+      () => AnimatedOpacity(
+        // If the widget is visible, animate to 0.0 (invisible).
+        // If the widget is hidden, animate to 1.0 (fully visible).
+        opacity: homeController.galleryVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 500),
+        // The green box must be a child of the AnimatedOpacity widget.
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: get_gallery_rows_list(),
+        ),
+      ),
     );
+
+    // return SingleChildScrollView(
+    //   padding: EdgeInsets.only(left: 20, right: 20),
+    //   child: get_gallery_rows_list()
+    // );
   }
 
   // 后端加载
   Future<int> _searchGallerys({List<GalleryModel>? list}) async {
-    var htmlDoc = await loadGallerysHtml(isPrev!, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
+    var htmlDoc = await loadGallerysHtml(isPrev!,
+        search: search,
+        cata: cata,
+        prev: prev,
+        next: next,
+        dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
     next = getGalleryNextPage(htmlDoc);
@@ -117,60 +130,48 @@ class _HomePageState extends State<HomePage> {
 
   // 下一页和上一页
   Widget _nextPrevButton() {
-    return Container(
-      height: BOTTOM_BAR_HEIGHT,
-      // color: Colors.red,
-      alignment: Alignment.topCenter,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          TextButton(
-            child: Obx(
-              () => Text(
-                "<< PREV",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
-            ),
-            onPressed: () async {
-              // await _searchGallerys(true);
-              setState(() {
-                isPrev = true;
-              });
-            },
-          ),
-          TextButton(
-            onPressed: _simpleDialog,
-            child: Obx(
-              () => Text(
-                "JUMP",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
+    return BottomBlurNavigator(
+      widgets: <Widget>[
+        TextButton(
+          child: Text(
+            "<< PREV",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
             ),
           ),
-          TextButton(
-            child: Obx(
-              () => Text(
-                "NEXT >>",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
+          onPressed: () async {
+            // await _searchGallerys(true);
+            setState(() {
+              isPrev = true;
+            });
+          },
+        ),
+        TextButton(
+          onPressed: _simpleDialog,
+          child: Text(
+            "JUMP",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
             ),
-            onPressed: () {
-              setState(() {
-                isPrev = false;
-              });
-            },
           ),
-        ],
-      ),
+        ),
+        TextButton(
+          child: Text(
+            "NEXT >>",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              isPrev = false;
+            });
+          },
+        ),
+      ],
     );
   }
 
@@ -256,15 +257,13 @@ class _HomePageState extends State<HomePage> {
     Widget content;
     List<Widget> ww = [];
     for (var g in glist) {
-      ww.add(GalleryCard(g));
-      ww.add(const Divider(
-        height: 1,
-        color: Colors.grey,
-      ));
+      ww.add(GalleryFlutterCard(g));
     }
     content = Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: ww,
     );
+
     return content;
   }
 }

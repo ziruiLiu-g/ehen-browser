@@ -88,7 +88,7 @@ class _GalleryPageState extends State<GalleryPage> {
       Container(
         height: 400,
         alignment: Alignment.center,
-        child: FutureBuilder<Image>(
+        child: FutureBuilder<Container>(
           future: get_first_img(g.gid, g.gtoken),
           builder: (context, snapshot) {
             Widget child;
@@ -263,16 +263,44 @@ class _GalleryPageState extends State<GalleryPage> {
     );
   }
 
-  Future<Image> get_first_img(String gid, String gtoken) async {
+  Future<Container> get_first_img(String gid, String gtoken) async {
     var html = await requestGalleryData(gid, gtoken);
     cover = get_Gallery_Show_Img(html);
     var cache = await downloadImageBytes(cover);
 
     g.maxPage = get_Max_Page(html);
 
-    return Image.memory(
-      cache!,
-      key: ValueKey(1),
+
+    return Container(
+      child:  Image.memory(
+        cache!,
+        key: ValueKey(1),
+      ),
+
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0),
+        borderRadius: BorderRadius.all(
+          Radius.circular(5.0),
+        ),
+        boxShadow: <BoxShadow>[
+          new BoxShadow(
+            color: Colors.black54,
+            blurRadius: 7.0,
+            offset: new Offset(5.0, 5.0),
+          ),
+        ],
+      ),
+
     );
+
+
+    // return Card(
+    //   child: Image.memory(
+    //     cache!,
+    //     key: ValueKey(1),
+    //   ),
+    //   shadowColor: Colors.black,
+    //   elevation: 50.0, // give it according to your requirement
+    // );
   }
 }
