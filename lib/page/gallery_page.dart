@@ -87,34 +87,6 @@ class _GalleryPageState extends State<GalleryPage> {
           )
         ],
       ),
-
-      // body: Container(
-      //   width: MediaQuery.of(context).size.width,
-      //   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-      //   child: ListView(
-      //     children: get_gallery_body(),
-      //   ),
-      // ),
-      // bottomNavigationBar: Obx(
-      //   () => InkWell(
-      //     onTap: () {
-      //       Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
-      //     },
-      //     child: Container(
-      //       height: BOTTOM_BAR_HEIGHT,
-      //       color: themeColor(ThemeController.isLightTheme),
-      //       alignment: Alignment.center,
-      //       child: const Text(
-      //         "READ",
-      //         style: TextStyle(
-      //           fontSize: 25,
-      //           fontWeight: FontWeight.bold,
-      //           color: Colors.white,
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // ),
     );
   }
 
@@ -208,7 +180,6 @@ class _GalleryPageState extends State<GalleryPage> {
   List<Widget> get_tags_details() {
     List<Widget> wl = [];
     for (var t in g.tags.keys) {
-      if (t == 'artist') continue;
       var tlist = g.tags[t];
 
       List<Widget> tagButton = [];
