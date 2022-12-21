@@ -2,6 +2,7 @@ import 'package:ehentai_browser/model/gallery_model.dart';
 import 'package:ehentai_browser/page/home/home.dart';
 import 'package:ehentai_browser/router/routes.dart';
 import 'package:ehentai_browser/util/ehentai_crawler.dart';
+import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,33 +54,67 @@ class _GalleryPageState extends State<GalleryPage> {
         ),
         actions: <Widget>[DarkModeSwitch()],
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-        child: ListView(
-          children: get_gallery_body(),
-        ),
-      ),
-      bottomNavigationBar: Obx(
-        () => InkWell(
-          onTap: () {
-            Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
-          },
-          child: Container(
-            height: BOTTOM_BAR_HEIGHT,
-            color: themeColor(ThemeController.isLightTheme),
-            alignment: Alignment.center,
-            child: const Text(
-              "READ",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+      body: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: BOTTOM_BAR_HEIGHT + 20),
+            child: ListView(
+              children: get_gallery_body(),
             ),
           ),
-        ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              BottomBlurNavigator(
+                widgets: [
+                  InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
+                    },
+                    child: const Text(
+                      "READ",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
       ),
+
+      // body: Container(
+      //   width: MediaQuery.of(context).size.width,
+      //   margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+      //   child: ListView(
+      //     children: get_gallery_body(),
+      //   ),
+      // ),
+      // bottomNavigationBar: Obx(
+      //   () => InkWell(
+      //     onTap: () {
+      //       Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
+      //     },
+      //     child: Container(
+      //       height: BOTTOM_BAR_HEIGHT,
+      //       color: themeColor(ThemeController.isLightTheme),
+      //       alignment: Alignment.center,
+      //       child: const Text(
+      //         "READ",
+      //         style: TextStyle(
+      //           fontSize: 25,
+      //           fontWeight: FontWeight.bold,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 
@@ -144,7 +179,7 @@ class _GalleryPageState extends State<GalleryPage> {
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getCataWidget(g.cata!.split(':')[0].trim(), wid: 100, hei: 35),
+          getCataWidget(g.cata!.split(':')[0].trim(), wid: 100, hei: 35, fontsize: 16),
           const SizedBox(
             height: 10,
           ),
@@ -270,13 +305,11 @@ class _GalleryPageState extends State<GalleryPage> {
 
     g.maxPage = get_Max_Page(html);
 
-
     return Container(
-      child:  Image.memory(
+      child: Image.memory(
         cache!,
         key: ValueKey(1),
       ),
-
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0),
         borderRadius: BorderRadius.all(
@@ -290,9 +323,7 @@ class _GalleryPageState extends State<GalleryPage> {
           ),
         ],
       ),
-
     );
-
 
     // return Card(
     //   child: Image.memory(

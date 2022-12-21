@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../common/const.dart';
 import '../../../controller/cata_controller.dart';
 
 class EhenCheck extends StatefulWidget {
@@ -23,11 +24,11 @@ class _EhenCheckState extends State<EhenCheck> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      height: 30.0,
-      child:  Container(
-        child: ClipRRect(
+      child: ClipRRect(
+        child: Container(
+          height: MULTI_SELECT_CATA_BAR_HEIGHT,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+            filter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5),
             child: _createAllChecks(),
           ),
         ),
@@ -45,9 +46,12 @@ class _EhenCheckState extends State<EhenCheck> {
         SizedBox(width: 20),
       );
     }
-    content = ListView(
+
+    content = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      children: ww,
+      child: Row(
+        children: ww,
+      ),
     );
 
     return content;
@@ -69,6 +73,7 @@ class _EhenCheckState extends State<EhenCheck> {
           },
           child: Container(
             width: 110,
+            height: 30,
             alignment: Alignment.center,
             //设置了 decoration 就不能设置color，两者只能存在一个
             decoration: BoxDecoration(
