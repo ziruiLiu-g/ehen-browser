@@ -5,6 +5,7 @@ import 'package:ehentai_browser/util/ehentai_crawler.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -69,15 +70,21 @@ class _GalleryPageState extends State<GalleryPage> {
               BottomBlurNavigator(
                 widgets: [
                   InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
                     onTap: () {
+                      HapticFeedback.lightImpact;
                       Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
                     },
-                    child: const Text(
-                      "READ",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "READ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
