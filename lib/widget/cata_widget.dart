@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../util/color.dart';
 
-Widget getCataWidget(String title, {double? wid, double? hei}) {
+Widget getCataWidget(String title, {double? wid, double? hei, double? fontsize}) {
   return Container(
     width: wid ?? 75,
     height: hei ?? 25,
@@ -15,9 +15,9 @@ Widget getCataWidget(String title, {double? wid, double? hei}) {
     child: Text(
       title,
       textAlign: TextAlign.center,
-      style: const TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize: 13,
+        fontSize: fontsize ?? 10,
         fontWeight: FontWeight.bold,
         decoration: TextDecoration.none,
       ),

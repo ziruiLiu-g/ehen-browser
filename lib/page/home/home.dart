@@ -2,7 +2,6 @@ import 'package:ehentai_browser/page/home/widget/gallery_flutter_card.dart';
 import 'package:ehentai_browser/page/home/widget/multi_cata_check.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
-import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,10 +9,8 @@ import 'package:get/get.dart';
 import '../../common/const.dart';
 import '../../controller/cata_controller.dart';
 import '../../controller/home_controller.dart';
-import '../../controller/theme_controller.dart';
 import '../../model/gallery_model.dart';
 import '../../util/ehentai_crawler.dart';
-import 'widget/gallery_card.dart';
 
 class HomePage extends StatefulWidget {
   String? sear = '';
@@ -44,39 +41,44 @@ class _HomePageState extends State<HomePage> {
     cata = '${ctaController.cataNum}';
     isPrev = false;
     search = widget.sear;
+    Future.delayed(Duration.zero, () => setState(() { _searchGallerys(false);}));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ehenAppBar((text) {
+      appBar: ehenAppBar((text) async {
         next = '';
-        setState(() {});
-      }, () {
+        homeController.galleryVisible = false;
+        await _searchGallerys(false);
+      }, () async {
         next = '';
-        setState(() {});
+        homeController.galleryVisible = false;
+        await _searchGallerys(false);
       }, (text) {
         search = text;
       }, searBarText: search),
       body: Stack(
         children: [
-          FutureBuilder<dynamic>(
-              future: _searchGallerys(),
-              builder: (context, snapshot) {
-                Widget child;
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  child = Container(
-                    alignment: Alignment.center,
-                    child: LoadingAnimation(),
-                  );
-                } else {
-                  child = _buildMainContent();
-                }
-
-                return child;
-              }),
+          _buildMainContent(),
+          // FutureBuilder<dynamic>(
+          //     future: _searchGallerys(),
+          //     builder: (context, snapshot) {
+          //       Widget child;
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         child = Container(
+          //           alignment: Alignment.center,
+          //           child: LoadingAnimation(),
+          //         );
+          //       } else {
+          //         child = _buildMainContent();
+          //       }
+          //
+          //       return child;
+          //     }),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               EhenCheck((cataNum) {
                 cata = '$cataNum';
@@ -96,36 +98,31 @@ class _HomePageState extends State<HomePage> {
         // If the widget is visible, animate to 0.0 (invisible).
         // If the widget is hidden, animate to 1.0 (fully visible).
         opacity: homeController.galleryVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 300),
         // The green box must be a child of the AnimatedOpacity widget.
         child: SingleChildScrollView(
           padding: EdgeInsets.only(left: 20, right: 20),
-          child: get_gallery_rows_list(),
+          child: Container(
+            padding: EdgeInsets.only(top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
+            child: get_gallery_rows_list(),
+          ),
         ),
       ),
     );
-
-    // return SingleChildScrollView(
-    //   padding: EdgeInsets.only(left: 20, right: 20),
-    //   child: get_gallery_rows_list()
-    // );
   }
 
   // 后端加载
-  Future<int> _searchGallerys({List<GalleryModel>? list}) async {
-    var htmlDoc = await loadGallerysHtml(isPrev!,
-        search: search,
-        cata: cata,
-        prev: prev,
-        next: next,
-        dateBefore: beforeDate);
+  _searchGallerys(isPrev, {List<GalleryModel>? list}) async {
+    var htmlDoc =
+        await loadGallerysHtml(isPrev!, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
     next = getGalleryNextPage(htmlDoc);
     prev = getGalleryPrevPage(htmlDoc);
     beforeDate = null;
     isInit = false;
-    return 1;
+
+    setState(() {});
   }
 
   // 下一页和上一页
@@ -141,10 +138,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           onPressed: () async {
-            // await _searchGallerys(true);
-            setState(() {
-              isPrev = true;
-            });
+            homeController.galleryVisible = false;
+            await _searchGallerys(true);
+            // setState(() {
+            //   isPrev = true;
+            // });
           },
         ),
         TextButton(
@@ -165,10 +163,9 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           ),
-          onPressed: () {
-            setState(() {
-              isPrev = false;
-            });
+          onPressed: () async {
+            homeController.galleryVisible = false;
+            await _searchGallerys(false);
           },
         ),
       ],
@@ -246,10 +243,10 @@ class _HomePageState extends State<HomePage> {
 
   // 日期选择器回调函数， 负责弹窗
   _date_selector_callback(String date, BuildContext context) async {
-    setState(() {
-      beforeDate = date;
-    });
+    beforeDate = date;
     Navigator.pop(context);
+    homeController.galleryVisible = false;
+    await _searchGallerys(false);
   }
 
   // 获取卡片列表

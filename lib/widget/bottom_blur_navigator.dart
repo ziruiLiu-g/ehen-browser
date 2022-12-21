@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../common/const.dart';
+
 class BottomBlurNavigator extends StatefulWidget {
   List<Widget>? widgets;
 
@@ -16,9 +18,10 @@ class _BottomBlurNavigatorState extends State<BottomBlurNavigator> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: BOTTOM_BAR_HEIGHT,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(left: 20, right: 20),
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: BOTTOM_BLUR_BAR_MARGIN_BOTTOM),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: BackdropFilter(

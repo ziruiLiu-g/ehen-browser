@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import '../common/const.dart';
 import '../controller/theme_controller.dart';
 import '../util/ehentai_crawler.dart';
+import '../widget/bottom_blur_navigator.dart';
 import '../widget/dark_mode_switcher.dart';
 
 class PicsPage extends StatefulWidget {
@@ -74,127 +75,116 @@ class _PicsPageState extends State<PicsPage> {
         ),
         actions: const <Widget>[DarkModeSwitch()],
       ),
-      body: loadedUrl.isEmpty
-          ? Container()
-          : SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  Column(
-                    children: loadedUrl,
-                  ),
-                  curPageNum != pics.length
-                      ? Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: LoadingAnimation(),
-                        )
-                      : Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          child: Obx(() => Text(
-                                'This is the Bottom of the page!!',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: picsLoadHintColor(ThemeController.isLightTheme),
-                                ),
-                              )),
-                        )
-                ],
-              ),
-            ),
-      // : ListView(
-      //     controller: _scrollController,
-      //     children: [
-      //       Column(
-      //         children: loadedUrl,
-      //       ),
-      //       curPageNum != pics.length
-      //           ? Container()
-      //           : Container(
-      //               height: 50,
-      //               alignment: Alignment.center,
-      //               child: const Text(
-      //                 'This is the Bottom of the page!!',
-      //                 style: TextStyle(
-      //                   fontSize: 12,
-      //                   color: Colors.grey,
-      //                 ),
-      //               ),
-      //             )
-      //     ],
-      //   ),
-      bottomNavigationBar: _nextPrevButton(),
-    );
-  }
+      body: Stack(
 
-  // 下一页和上一页
-  Widget _nextPrevButton() {
-    return Container(
-      height: 70,
-      // color: Colors.red,
-      alignment: Alignment.topCenter,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          TextButton(
-            child: Obx(
-              () => Text(
-                "<< PREV",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
-            ),
-            onPressed: () async {
-              if (thisPage == 0) return;
-
-              thisPage -= 1;
-              loadedUrl = [];
-              curPageNum = 0;
-              await getAllPicsList(g.gid, g.gtoken, thisPage);
-              setState(() {
-                getMorePics();
-              });
-            },
-          ),
-          TextButton(
-            child: Obx(
-              () => Text(
-                "${thisPage + 1}/${g.maxPage}",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
-            ),
-            onPressed: () {},
-          ),
-          TextButton(
-            child: Obx(
-              () => Text(
-                "NEXT >>",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: galleryPageButtonColor(ThemeController.isLightTheme),
-                ),
-              ),
-            ),
-            onPressed: () async {
-              if (thisPage == g.maxPage! - 1) return;
-
-              thisPage += 1;
-              loadedUrl = [];
-              curPageNum = 0;
-              await getAllPicsList(g.gid, g.gtoken, thisPage);
-              setState(() {
-                getMorePics();
-              });
-            },
+        children: [
+          _getBody(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              _nextPrevButton()
+            ],
           ),
         ],
       ),
+    );
+  }
+
+
+  Widget _getBody() {
+    return loadedUrl.isEmpty
+        ? Container()
+        : SingleChildScrollView(
+      controller: _scrollController,
+      child: Container(
+        padding: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT + 20),
+        child: Column(
+          children: [
+            Column(
+              children: loadedUrl,
+            ),
+            if (curPageNum != pics.length)
+              Container(
+                height: 50,
+                alignment: Alignment.center,
+                child: LoadingAnimation(),
+              )
+            else
+              Container(
+                height: 50,
+                alignment: Alignment.center,
+                child: Obx(
+                      () => Text(
+                    'This is the Bottom of the page!!',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: picsLoadHintColor(ThemeController.isLightTheme),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  // 下一页和上一页
+  Widget _nextPrevButton() {
+    return BottomBlurNavigator(
+      widgets: <Widget>[
+        TextButton(
+          child: Text(
+            "<< PREV",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          onPressed: () async {
+            if (thisPage == 0) return;
+
+            thisPage -= 1;
+            loadedUrl = [];
+            curPageNum = 0;
+            await getAllPicsList(g.gid, g.gtoken, thisPage);
+            setState(() {
+              getMorePics();
+            });
+          },
+        ),
+        TextButton(
+          child: Text(
+            '${thisPage + 1}/${g.maxPage}',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          onPressed: () {},
+        ),
+        TextButton(
+          child: Text(
+            "NEXT >>",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+          onPressed: () async {
+            if (thisPage == g.maxPage! - 1) return;
+
+            thisPage += 1;
+            loadedUrl = [];
+            curPageNum = 0;
+            await getAllPicsList(g.gid, g.gtoken, thisPage);
+            setState(() {
+              getMorePics();
+            });
+          },
+        ),
+      ],
     );
   }
 
