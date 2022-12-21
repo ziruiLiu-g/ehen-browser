@@ -58,11 +58,10 @@ class _GalleryFlutterCardState extends State<GalleryFlutterCard> {
                   // width: MediaQuery.of(context).size.width * 4 / 7,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Expanded(
-                          child: Obx(
-                        () => Text(
+                      Obx(
+                            () => Text(
                           '${widget.g.title}  (${widget.g.image_count}P)',
                           maxLines: 3,
                           style: TextStyle(
@@ -73,9 +72,9 @@ class _GalleryFlutterCardState extends State<GalleryFlutterCard> {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                      )),
-                      Expanded(child: getCataWidget(widget.g.cata!.split(':')[0].trim(), wid: 60, hei: 20)),
+                      ),
                       Spacer(),
+                      getCataWidget(widget.g.cata!.split(':')[0].trim(), wid: 65, hei: 22),
                       Spacer(),
                       Expanded(
                           child: Text(

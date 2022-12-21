@@ -255,6 +255,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> ww = [];
     for (var g in glist) {
       ww.add(GalleryFlutterCard(g));
+      ww.add(SizedBox(height: 5,));
     }
     content = Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
