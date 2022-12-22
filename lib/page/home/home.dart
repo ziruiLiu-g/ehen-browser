@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   final ctaController = Get.put(CataController());
   final homeController = Get.put(HomeController());
 
+  final _scrollController = ScrollController();
+
   late List<GalleryModel> glist = [];
 
   String? prev;
@@ -41,7 +43,16 @@ class _HomePageState extends State<HomePage> {
     cata = '${ctaController.cataNum}';
     isPrev = false;
     search = widget.sear;
+
+
     Future.delayed(Duration.zero, () => setState(() { _searchGallerys(false);}));
+  }
+
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -98,9 +109,10 @@ class _HomePageState extends State<HomePage> {
         // If the widget is visible, animate to 0.0 (invisible).
         // If the widget is hidden, animate to 1.0 (fully visible).
         opacity: homeController.galleryVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200),
         // The green box must be a child of the AnimatedOpacity widget.
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: EdgeInsets.only(left: 20, right: 20),
           child: Container(
             padding: EdgeInsets.only(top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
@@ -122,7 +134,9 @@ class _HomePageState extends State<HomePage> {
     beforeDate = null;
     isInit = false;
 
-    setState(() {});
+    setState(() {
+      _scrollController.animateTo(.0, duration: Duration(milliseconds: 600), curve: Curves.easeOutCubic);
+    });
   }
 
   // 下一页和上一页
