@@ -43,8 +43,6 @@ class _HomePageState extends State<HomePage> {
     cata = '${ctaController.cataNum}';
     isPrev = false;
     search = widget.sear;
-
-
     Future.delayed(Duration.zero, () => setState(() { _searchGallerys(false);}));
   }
 
@@ -104,21 +102,13 @@ class _HomePageState extends State<HomePage> {
 
   _buildMainContent() {
     homeController.galleryVisible = true;
-    return Obx(
-      () => AnimatedOpacity(
-        // If the widget is visible, animate to 0.0 (invisible).
-        // If the widget is hidden, animate to 1.0 (fully visible).
-        opacity: homeController.galleryVisible ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 200),
-        // The green box must be a child of the AnimatedOpacity widget.
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: Container(
-            padding: EdgeInsets.only(top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
-            child: get_gallery_rows_list(),
-          ),
-        ),
+
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Container(
+        padding: EdgeInsets.only(top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
+        child: get_gallery_rows_list(),
       ),
     );
   }
@@ -267,8 +257,16 @@ class _HomePageState extends State<HomePage> {
   Widget get_gallery_rows_list() {
     Widget content;
     List<Widget> ww = [];
-    for (var g in glist) {
-      ww.add(GalleryFlutterCard(g));
+    for (int index = 0; index < glist.length; index++) {
+      ww.add(
+          Obx(
+                () => AnimatedOpacity(
+              opacity: homeController.galleryVisible ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 500 + 20 * index),
+              child: GalleryFlutterCard(glist[index]),
+            ),
+          ),
+      );
       ww.add(SizedBox(height: 5,));
     }
     content = Column(
