@@ -33,3 +33,15 @@ Color picsLoadHintColor(bool x) {
 Color loadingCircleColr(bool x) {
   return x ? primary : Colors.white60;
 }
+
+LinearGradient bgGradientColor(bool x) {
+  return x ? const LinearGradient(
+    colors: [Color(0xFF66C2F3), Color(0xFF2188DE), Color(0xFF473BF5)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  ) : const LinearGradient(
+    colors: [Color(0xFFfbab66), Color(0xFFf7418c)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+}
