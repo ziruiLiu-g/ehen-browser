@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 
-const MaterialColor primary = const MaterialColor(
-  0xffff9db5,
-  const <int, Color>{
-    50: Color(0xffff9db5),
-    100: Color(0xffff9db5),
-    200: Color(0xffff9db5),
-    300: Color(0xffff9db5),
-    400: Color(0xffff9db5),
-    500: Color(0xffff9db5),
-    600: Color(0xffff9db5),
-    700: Color(0xffff9db5),
-    800: Color(0xffff9db5),
-    900: Color(0xffff9db5),
+// const MaterialColor primary = const MaterialColor(
+//   0xffff9db5,
+//   const <int, Color>{
+//     50: Color(0xffff9db5),
+//     100: Color(0xffff9db5),
+//     200: Color(0xffff9db5),
+//     300: Color(0xffff9db5),
+//     400: Color(0xffff9db5),
+//     500: Color(0xffff9db5),
+//     600: Color(0xffff9db5),
+//     700: Color(0xffff9db5),
+//     800: Color(0xffff9db5),
+//     900: Color(0xffff9db5),
+//   },
+// );
+var c = Color(0xffa5b499);
+const MaterialColor primary = MaterialColor(
+  0xffa5b499,
+  <int, Color>{
+    50: Color(0xffa5b499),
+    100:Color(0xffa5b499),
+    200:Color(0xffa5b499),
+    300:Color(0xffa5b499),
+    400:Color(0xffa5b499),
+    500:Color(0xffa5b499),
+    600:Color(0xffa5b499),
+    700:Color(0xffa5b499),
+    800:Color(0xffa5b499),
+    900:Color(0xffa5b499),
   },
 );
 
@@ -75,3 +91,40 @@ final cataMap = {
   'Asian Porn': {"value": 128, "activeColor": Colors.pink[300], "checkColor": Colors.red[100]},
   'Misc': {"value": 1, "activeColor": Colors.grey[700], "checkColor": Colors.grey[400]},
 };
+
+
+Color galleryTitleColor(bool x) {
+  return x ? Colors.black : Colors.white;
+}
+
+Color galleryPageButtonColor(bool x) {
+  return x ? primary : Colors.white;
+}
+
+Color themeColor(bool x) {
+  return x ? primary : darkPrimary;
+}
+
+Color galleryStartPageBgColor(bool x) {
+  return x ? Colors.white : Colors.black;
+}
+
+Color picsLoadHintColor(bool x) {
+  return x ? primary : Colors.grey;
+}
+
+Color loadingCircleColr(bool x) {
+  return x ? primary : Colors.white60;
+}
+
+LinearGradient bgGradientColor(bool x) {
+  return x ? const LinearGradient(
+    colors: [Color(0xFFE5DACD), Color(0xFFA69D94), Color(0xFF6B6561)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  ) : const LinearGradient(
+    colors: [Color(0xFFfbab66), Color(0xFFf7418c), Color(0xffb2389b)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+}

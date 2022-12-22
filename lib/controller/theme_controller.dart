@@ -18,8 +18,6 @@ class ThemeController extends GetxController {
 
   static bool get isLightTheme => _themeController!._isLightTheme.value;
 
-  static void set isLightTheme(bool x) => _themeController!._isLightTheme.value = x;
-
   static void setIsLightTheme(bool x) {
     _themeController!._isLightTheme.value = x;
   }

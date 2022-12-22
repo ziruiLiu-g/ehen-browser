@@ -1,84 +1,38 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-import '../common/const.dart';
+import '../util/color.dart';
+import 'book_open_page.dart';
+import 'home/home.dart';
 
 class StartPage extends StatefulWidget {
-  const StartPage({Key? key}) : super(key: key);
-
   @override
-  State<StartPage> createState() => _StartPageState();
+  _StartPageState createState() => _StartPageState();
 }
 
-class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
-  AnimationController? controller;
-
-  late Animation<double> animation = CurvedAnimation(parent: controller!, curve: Curves.linear);
-
-  bool isShowLoader = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller = AnimationController(
-      vsync: this,
-      value: 1.0,
-      lowerBound: 0.4,
-      upperBound: 1.0,
-      duration: const Duration(milliseconds: 300),
-    );
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      controller?.reverse();
-    });
-
-    controller?.addStatusListener((status) {
-      if (status == AnimationStatus.dismissed) {
-        setState(() {
-          isShowLoader = true;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
-
+class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width / 3;
-    return Container(
-      color: galleryStartPageBgColor(!Get.isDarkMode),
-      child: Center(
-        child: SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              GFAnimation(
-                scaleAnimation: animation,
-                controller: controller,
-                type: GFAnimationType.scaleTransition,
-                alignment: Alignment.center,
-                child: Text(
-                  "EhBrowser",
-                  style: TextStyle(
-                    color: galleryPageButtonColor(!Get.isDarkMode),
-                    fontSize: size / 4,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-              ),
-            ],
-          ),
+    return AnimatedSplashScreen(
+      duration: 3000,
+      curve: Curves.easeInCirc,
+      animationDuration: Duration(milliseconds: 1500),
+      backgroundColor: themeColor(!Get.isDarkMode),
+      splash: Text(
+        "EhBrowser",
+        style: TextStyle(
+          // color: galleryPageButtonColor(!Get.isDarkMode),
+          color: Colors.white,
+          fontSize: MediaQuery.of(context).size.width / (3 * 4),
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.none,
         ),
       ),
+      nextScreen: Container(),
+      splashTransition: SplashTransition.fadeTransition,
     );
   }
 }

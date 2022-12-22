@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:ehentai_browser/util/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../common/const.dart';
@@ -70,6 +71,7 @@ class _EhenCheckState extends State<EhenCheck> {
             ctaController.updateNum(ctaController.cataCheck[curKey]! ? 0 - checkValue : checkValue);
 
             widget.getCataFunc(ctaController.cataNum);
+            HapticFeedback.lightImpact();
           },
           child: Container(
             width: 110,

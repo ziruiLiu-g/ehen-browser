@@ -12,6 +12,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:logger/logger.dart';
 
 import '../common/const.dart';
+import '../controller/home_controller.dart';
 import '../controller/theme_controller.dart';
 import '../util/color.dart';
 import '../util/image_save_load.dart';
@@ -28,6 +29,8 @@ class GalleryPage extends StatefulWidget {
 class _GalleryPageState extends State<GalleryPage> {
   static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
   var scrollController = ScrollController();
+  final _homeController = Get.find<HomeController>();
+
   late GalleryModel g;
   late String cover;
 
@@ -58,8 +61,12 @@ class _GalleryPageState extends State<GalleryPage> {
       body: Stack(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: BOTTOM_BAR_HEIGHT + 20),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            margin: EdgeInsets.only(
+                top: 20, left: 20, right: 20, bottom: BOTTOM_BAR_HEIGHT + 20),
             child: ListView(
               children: get_gallery_body(),
             ),
@@ -73,8 +80,8 @@ class _GalleryPageState extends State<GalleryPage> {
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     onTap: () {
-                      HapticFeedback.lightImpact;
                       Get.toNamed(Routes.PicsPage, arguments: {'gallery': g});
+                      HapticFeedback.mediumImpact();
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -112,10 +119,11 @@ class _GalleryPageState extends State<GalleryPage> {
               );
             } else {
               child = InkWell(
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (BuildContext context) => TapablePhoto(cover),
-                ),
+                onTap: () =>
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => TapablePhoto(cover),
+                    ),
                 child: snapshot.data!,
               );
             }
@@ -131,21 +139,25 @@ class _GalleryPageState extends State<GalleryPage> {
         height: 30,
       ),
       Obx(
-        () => Text(
-          g.title!,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 22,
-            color: galleryPageButtonColor(ThemeController.isLightTheme),
-          ),
-        ),
+            () =>
+            Text(
+              g.title!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 22,
+                color: galleryPageButtonColor(ThemeController.isLightTheme),
+              ),
+            ),
       ),
       const SizedBox(height: 30),
       get_gallery_details(),
       const SizedBox(height: 20),
       Container(
         // color: Colors.red,
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: Column(
           children: get_tags_details(),
         ),
@@ -155,32 +167,34 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Widget get_gallery_details() {
     return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getCataWidget(g.cata!.split(':')[0].trim(), wid: 100, hei: 35, fontsize: 16),
-          const SizedBox(
-            height: 10,
+          () =>
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getCataWidget(g.cata!.split(':')[0].trim(),
+                  wid: 100, hei: 35, fontsize: 16),
+              const SizedBox(
+                height: 10,
+              ),
+              get_detail_row('Pages', '${g.image_count}'),
+              const SizedBox(
+                height: 8,
+              ),
+              get_detail_row('Rating', '${g.rating}'),
+              const SizedBox(
+                height: 8,
+              ),
+              get_detail_row('Artist', '${g.tags['artist']?.join(',')}'),
+              const SizedBox(
+                height: 8,
+              ),
+              get_detail_row('Posted on', '${g.post}'),
+              const SizedBox(
+                height: 10,
+              ),
+              const Divider(height: 0, thickness: 2),
+            ],
           ),
-          get_detail_row('Pages', '${g.image_count}'),
-          const SizedBox(
-            height: 8,
-          ),
-          get_detail_row('Rating', '${g.rating}'),
-          const SizedBox(
-            height: 8,
-          ),
-          get_detail_row('Artist', '${g.tags['artist']?.join(',')}'),
-          const SizedBox(
-            height: 8,
-          ),
-          get_detail_row('Posted on', '${g.post}'),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(height: 0, thickness: 2),
-        ],
-      ),
     );
   }
 
@@ -191,31 +205,35 @@ class _GalleryPageState extends State<GalleryPage> {
 
       List<Widget> tagButton = [];
       for (var tb in tlist!) {
-        tagButton.add(Ink(
-          color: Color(hexOfRGBA(226, 225, 210)),
-          child: InkWell(
-            // splashFactory: InkRipple.splashFactory,
-            splashColor: Colors.grey,
+        tagButton.add(
+          InkWell(
+            borderRadius: BorderRadius.circular(4.0),
             onTap: () {
-              Get.to(HomePage(
-                sear: tb,
-              ));
+              _homeController.sear = tb;
+              Get.toNamed(Routes.Home);
+              HapticFeedback.lightImpact();
             },
             child: Container(
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3.0),
+                borderRadius: BorderRadius.circular(4.0),
                 border: Border.all(width: 2.0, color: Colors.grey),
+                color: Color(hexOfRGBA(226, 225, 210)),
               ),
               height: 25,
-              padding: const EdgeInsets.only(top: 2, bottom: 2, left: 6, right: 6),
+              padding:
+              const EdgeInsets.only(top: 2, bottom: 2, left: 6, right: 6),
               child: Text(
                 tb,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.black, fontSize: 13, decoration: TextDecoration.none),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    decoration: TextDecoration.none),
               ),
             ),
           ),
-        ));
+        );
       }
 
       var r = Row(
@@ -225,13 +243,14 @@ class _GalleryPageState extends State<GalleryPage> {
             alignment: Alignment.topLeft,
             width: 100,
             child: Obx(
-              () => Text(
-                '${t}: ',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: galleryTitleColor(ThemeController.isLightTheme),
-                ),
-              ),
+                  () =>
+                  Text(
+                    '${t}: ',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: galleryTitleColor(ThemeController.isLightTheme),
+                    ),
+                  ),
             ),
           ),
           Expanded(
@@ -266,18 +285,19 @@ class _GalleryPageState extends State<GalleryPage> {
         ),
         Expanded(
             child: Text(
-          '$field',
-          style: TextStyle(
-            fontSize: 15,
-            color: galleryTitleColor(ThemeController.isLightTheme),
-          ),
-        ))
+              '$field',
+              style: TextStyle(
+                fontSize: 15,
+                color: galleryTitleColor(ThemeController.isLightTheme),
+              ),
+            ))
       ],
     );
   }
 
   Future<Container> get_first_img(String gid, String gtoken) async {
     var html = await requestGalleryData(gid, gtoken);
+    html = await checkIfSensitivePage(html);
     cover = get_Gallery_Show_Img(html);
     var cache = await downloadImageBytes(cover);
 
@@ -290,11 +310,11 @@ class _GalleryPageState extends State<GalleryPage> {
       ),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0),
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(5.0),
         ),
         boxShadow: <BoxShadow>[
-          new BoxShadow(
+          BoxShadow(
             color: Colors.black54,
             blurRadius: 7.0,
             offset: new Offset(5.0, 5.0),
@@ -302,14 +322,5 @@ class _GalleryPageState extends State<GalleryPage> {
         ],
       ),
     );
-
-    // return Card(
-    //   child: Image.memory(
-    //     cache!,
-    //     key: ValueKey(1),
-    //   ),
-    //   shadowColor: Colors.black,
-    //   elevation: 50.0, // give it according to your requirement
-    // );
   }
 }

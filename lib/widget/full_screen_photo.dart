@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class TapablePhoto extends StatelessWidget {
@@ -16,7 +17,9 @@ class TapablePhoto extends StatelessWidget {
       backgroundColor: Colors.transparent,
       title: Container(
         child: InkWell(
-          onTap: () => Get.back(),
+          onTap: () {
+            Get.back();
+          },
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Image.network(

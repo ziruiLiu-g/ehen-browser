@@ -1,13 +1,14 @@
 import 'package:ehentai_browser/router/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
-import '../../../common/const.dart';
 import '../../../controller/theme_controller.dart';
 import '../../../model/gallery_model.dart';
+import '../../../util/color.dart';
 import '../../../widget/cata_widget.dart';
 import '../../../widget/full_screen_photo.dart';
 
@@ -44,7 +45,10 @@ class _GalleryCardState extends State<GalleryCard> {
             ),
           ),
           InkWell(
-            onTap: () => Get.toNamed(Routes.Gallery, arguments: {'gallery': widget.g}),
+            onTap: () {
+              Get.toNamed(Routes.Gallery, arguments: {'gallery': widget.g});
+              HapticFeedback.mediumImpact();
+            },
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 3 / 5,
               child: Column(
@@ -66,10 +70,14 @@ class _GalleryCardState extends State<GalleryCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   )),
-                  getCataWidget(widget.g.cata!.split(':')[0].trim(), wid: 75, hei: 26),
+                  getCataWidget(widget.g.cata!.split(':')[0].trim(),
+                      wid: 75, hei: 26),
                   Text(
                     'Rating: ${widget.g.rating}',
-                    style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                    style: const TextStyle(
+                        fontSize: 10,
+                        color: Color(0xffff9db5),
+                        decoration: TextDecoration.none),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Container(
@@ -77,13 +85,19 @@ class _GalleryCardState extends State<GalleryCard> {
                     child: Text(
                       'Artist: ${widget.g.tags['artist']?.join(',')}',
                       // maxLines: 3,
-                      style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Color(0xffff9db5),
+                          decoration: TextDecoration.none),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
                     'Post Date: ${widget.g.post}',
-                    style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                    style: const TextStyle(
+                        fontSize: 10,
+                        color: Color(0xffff9db5),
+                        decoration: TextDecoration.none),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

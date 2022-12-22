@@ -11,7 +11,8 @@ import '../xhenhttp/dao/xhen_dao.dart';
 var header = {
   'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) ' +
       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
-  "Keep-Alive": "timeout=8"
+  "Keep-Alive": "timeout=8",
+  // "cookie": "sl=dm_1"
 };
 
 const XHENTAIL_PREFIX = 'https://e-hentai.org/?';
@@ -92,6 +93,23 @@ Future<String> requestGalleryData(String gid, String token) async {
     return response.body;
   }
   return '<html>error! status:${response.statusCode}</html>';
+}
+
+Future<String> checkIfSensitivePage(String html) async {
+  Document document = parse(html);
+  var showImgUrls = document.querySelectorAll('body > div > p > a');
+  if (showImgUrls.length == 3) {
+    var url = showImgUrls[2].attributes['href'];
+    var newHead = header;
+    newHead['cookie'] = 'nw=1';
+    var response = await http.get(Uri.parse(url!), headers: newHead);
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return '<html>error! status:${response.statusCode}</html>';
+  } else {
+    return html;
+  }
 }
 
 String get_Gallery_Show_Img(html) {
@@ -208,11 +226,24 @@ Future<List<String>> get_page_pics(String gid, String gtoken, int page) async {
 }
 
 Future<String> get_img(String url) async {
+  // first get the fail load path
   var response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(milliseconds: 5000));
   String html = response.body;
   Document document = parse(html);
+  var postfix = document.querySelectorAll('#loadfail')[0].attributes['onclick'];
+  int firstP = postfix!.indexOf("'") + 1;
+  int lastP = postfix.lastIndexOf("'");
+  var post = postfix.substring(firstP, lastP);
 
+  url = url + '?nl=' + post;
+
+  // request again with new url
+  response = await http.get(Uri.parse(url), headers: header).timeout(const Duration(milliseconds: 5000));
+  html = response.body;
+  document = parse(html);
   List<Element> gl = document.querySelectorAll("#img");
+
+
 
   if (gl.isNotEmpty) {
     return gl[0].attributes['src']!;
