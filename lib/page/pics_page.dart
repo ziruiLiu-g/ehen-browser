@@ -12,6 +12,7 @@ import 'package:logger/logger.dart';
 
 import '../common/const.dart';
 import '../controller/theme_controller.dart';
+import '../util/color.dart';
 import '../util/ehentai_crawler.dart';
 import '../widget/bottom_blur_navigator.dart';
 import '../widget/dark_mode_switcher.dart';

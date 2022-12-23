@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 
 import '../common/const.dart';
+import '../util/color.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);

@@ -2,6 +2,7 @@ import 'package:ehentai_browser/page/home/widget/gallery_flutter_card.dart';
 import 'package:ehentai_browser/page/home/widget/multi_cata_check.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
+import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,39 +14,33 @@ import '../../model/gallery_model.dart';
 import '../../util/ehentai_crawler.dart';
 
 class HomePage extends StatefulWidget {
-  String? sear = '';
+  // String? sear;
 
   @override
   State<HomePage> createState() => _HomePageState();
 
-  HomePage({this.sear});
+// HomePage({this.sear});
 }
 
 class _HomePageState extends State<HomePage> {
   final ctaController = Get.put(CataController());
-  final homeController = Get.put(HomeController());
-
   final _scrollController = ScrollController();
+  final _homeController = Get.put(HomeController());
 
-  late List<GalleryModel> glist = [];
+  List<GalleryModel> glist = [];
 
   String? prev;
   String? next;
-  String? search;
   String? cata;
   String? beforeDate;
   bool? isPrev;
-  var isInit = true;
 
   @override
   void initState() {
     super.initState();
     cata = '${ctaController.cataNum}';
     isPrev = false;
-    search = widget.sear;
-    Future.delayed(Duration.zero, () => setState(() { _searchGallerys(false);}));
   }
-
 
   @override
   void dispose() {
@@ -56,35 +51,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ehenAppBar((text) async {
+      appBar: ehenAppBar((text) {
         next = '';
-        homeController.galleryVisible = false;
-        await _searchGallerys(false);
-      }, () async {
+        setState(() {
+          _homeController.galleryVisible = false;
+        });
+      }, () {
         next = '';
-        homeController.galleryVisible = false;
-        await _searchGallerys(false);
+        setState(() {
+          _homeController.galleryVisible = false;
+        });
       }, (text) {
-        search = text;
-      }, searBarText: search),
+        _homeController.sear = text;
+      }, searBarText: _homeController.sear),
       body: Stack(
+        alignment: Alignment.center,
         children: [
           _buildMainContent(),
-          // FutureBuilder<dynamic>(
-          //     future: _searchGallerys(),
-          //     builder: (context, snapshot) {
-          //       Widget child;
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         child = Container(
-          //           alignment: Alignment.center,
-          //           child: LoadingAnimation(),
-          //         );
-          //       } else {
-          //         child = _buildMainContent();
-          //       }
-          //
-          //       return child;
-          //     }),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,32 +84,56 @@ class _HomePageState extends State<HomePage> {
   }
 
   _buildMainContent() {
-    homeController.galleryVisible = true;
-
     return SingleChildScrollView(
       controller: _scrollController,
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Container(
-        padding: EdgeInsets.only(top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
-        child: get_gallery_rows_list(),
+        padding: EdgeInsets.only(
+            top: MULTI_SELECT_CATA_BAR_HEIGHT, bottom: BOTTOM_BAR_HEIGHT + 20),
+        // child: get_gallery_rows_list(),
+        child: FutureBuilder<dynamic>(
+            future: _searchGallerys(),
+            builder: (context, snapshot) {
+              Widget child;
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  glist.length == 0) {
+                child = Container(
+                  key: ValueKey(1),
+                  child: LoadingAnimation(),
+                );
+              } else {
+                child = Container(
+                  key: ValueKey(0),
+                  child: get_gallery_rows_list(),
+                );
+              }
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: child,
+              );
+            }),
       ),
     );
   }
 
   // 后端加载
-  _searchGallerys(isPrev, {List<GalleryModel>? list}) async {
-    var htmlDoc =
-        await loadGallerysHtml(isPrev!, search: search, cata: cata, prev: prev, next: next, dateBefore: beforeDate);
+  _searchGallerys({List<GalleryModel>? list}) async {
+    var htmlDoc = await loadGallerysHtml(isPrev!,
+        search: _homeController.sear,
+        cata: cata,
+        prev: prev,
+        next: next,
+        dateBefore: beforeDate);
 
     glist = await getGalleryList(htmlDoc, list: list);
     next = getGalleryNextPage(htmlDoc);
     prev = getGalleryPrevPage(htmlDoc);
     beforeDate = null;
-    isInit = false;
+    isPrev = false;
 
-    setState(() {
-      _scrollController.animateTo(.0, duration: Duration(milliseconds: 600), curve: Curves.easeOutCubic);
-    });
+    _homeController.galleryVisible = true;
+    _scrollController.animateTo(.0,
+        duration: Duration(milliseconds: 1000), curve: Curves.linear);
   }
 
   // 下一页和上一页
@@ -141,12 +148,12 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           ),
-          onPressed: () async {
-            homeController.galleryVisible = false;
-            await _searchGallerys(true);
-            // setState(() {
-            //   isPrev = true;
-            // });
+          onPressed: () {
+            // await _searchGallerys(true);
+            setState(() {
+              isPrev = true;
+              _homeController.galleryVisible = false;
+            });
           },
         ),
         TextButton(
@@ -167,9 +174,10 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           ),
-          onPressed: () async {
-            homeController.galleryVisible = false;
-            await _searchGallerys(false);
+          onPressed: () {
+            setState(() {
+              _homeController.galleryVisible = false;
+            });
           },
         ),
       ],
@@ -249,8 +257,10 @@ class _HomePageState extends State<HomePage> {
   _date_selector_callback(String date, BuildContext context) async {
     beforeDate = date;
     Navigator.pop(context);
-    homeController.galleryVisible = false;
-    await _searchGallerys(false);
+    // await _searchGallerys(false);
+    setState(() {
+      _homeController.galleryVisible = false;
+    });
   }
 
   // 获取卡片列表
@@ -259,15 +269,18 @@ class _HomePageState extends State<HomePage> {
     List<Widget> ww = [];
     for (int index = 0; index < glist.length; index++) {
       ww.add(
-          Obx(
-                () => AnimatedOpacity(
-              opacity: homeController.galleryVisible ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 500 + 20 * index),
-              child: GalleryFlutterCard(glist[index]),
-            ),
+        // GalleryFlutterCard(glist[index]),
+        Obx(
+          () => AnimatedOpacity(
+            opacity: _homeController.galleryVisible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 200),
+            child: GalleryFlutterCard(glist[index]),
           ),
+        ),
       );
-      ww.add(SizedBox(height: 5,));
+      ww.add(SizedBox(
+        height: 5,
+      ));
     }
     content = Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

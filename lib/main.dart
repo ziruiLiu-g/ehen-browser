@@ -1,14 +1,17 @@
-import 'package:ehentai_browser/localdb/local_storage.dart';
-import 'package:ehentai_browser/page/startPage.dart';
-import 'package:ehentai_browser/router/router.dart';
+import 'dart:async';
+
+import 'package:ehentai_browser/page/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 import 'common/const.dart';
 import 'common/global.dart';
-import 'page/home/home.dart';
+import 'localdb/local_storage.dart';
+import 'page/startPage.dart';
+import 'router/router.dart';
 import 'util/color.dart';
+import 'page/book_open_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +19,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: primary,
       ),
-      themeMode: (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool) ? ThemeMode.light : ThemeMode.dark,
+      themeMode: (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool)
+          ? ThemeMode.light
+          : ThemeMode.dark,
       builder: (context, child) => Scaffold(
         // Global GestureDetector that will dismiss the keyboard
         body: GestureDetector(
@@ -42,27 +44,38 @@ class MyApp extends StatelessWidget {
         ),
       ),
       getPages: EhenRouters.pages,
-      home: FutureBuilder<dynamic>(
-          future: loadingPageTimer(),
-          builder: (context, snapshot) {
-            Widget child;
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              child = const StartPage(
-                key: ValueKey(1),
-              );
-            } else {
-              child = HomePage();
-            }
-            return AnimatedSwitcher(
-              duration: Duration(seconds: 3),
-              child: child,
-            );
-          }),
+      // home: MyHomePage(),
+      // home: HomePage(),
+      home: BookOpenPage(
+        child: HomePage(),
+      ),
+      // home: CustomGuitarDrawer(
+      //   child: FutureBuilder<dynamic>(
+      //       future: loadingPageTimer(),
+      //       builder: (context, snapshot) {
+      //         Widget child;
+      //         if (snapshot.connectionState == ConnectionState.waiting) {
+      //           child = const StartPage(
+      //             key: ValueKey(1),
+      //           );
+      //         } else {
+      //           // child = HomePage();
+      //           child = CustomGuitarDrawer(
+      //             key: ValueKey(0),
+      //             child: HomePage(),
+      //           );
+      //         }
+      //         return AnimatedSwitcher(
+      //           duration: const Duration(milliseconds: 2000),
+      //           child: child,
+      //         );
+      //       }),
+      // ),
     );
   }
 
   Future<dynamic> loadingPageTimer() async {
-    await Future.delayed(Duration(milliseconds: 1500), () {});
+    await Future.delayed(Duration(milliseconds: 1000), () {});
   }
 
   void hideKeyboard(BuildContext context) {
@@ -70,5 +83,25 @@ class MyApp extends StatelessWidget {
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
       FocusManager.instance.primaryFocus?.unfocus();
     }
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(Duration(seconds: 1), () {
+      Get.off(BookOpenPage(child: HomePage()));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: StartPage());
   }
 }

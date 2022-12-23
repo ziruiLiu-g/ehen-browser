@@ -8,6 +8,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import '../../../common/const.dart';
 import '../../../controller/theme_controller.dart';
 import '../../../model/gallery_model.dart';
+import '../../../util/color.dart';
 import '../../../widget/cata_widget.dart';
 import '../../../widget/full_screen_photo.dart';
 

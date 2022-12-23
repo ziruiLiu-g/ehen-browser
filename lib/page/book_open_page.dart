@@ -6,20 +6,23 @@ import 'package:get/get.dart';
 
 import '../common/const.dart';
 import '../controller/theme_controller.dart';
+import '../util/color.dart';
 import '../widget/dark_mode_switcher.dart';
 
-class CustomGuitarDrawer extends StatefulWidget {
+class BookOpenPage extends StatefulWidget {
   final Widget child;
 
-  const CustomGuitarDrawer({Key? key, required this.child}) : super(key: key);
+  const BookOpenPage({Key? key, required this.child}) : super(key: key);
 
-  static CustomGuitarDrawerState? of(BuildContext context) => context.findAncestorStateOfType<CustomGuitarDrawerState>();
+  static BookOpenPageState? of(BuildContext context) =>
+      context.findAncestorStateOfType<BookOpenPageState>();
 
   @override
-  CustomGuitarDrawerState createState() => new CustomGuitarDrawerState();
+  BookOpenPageState createState() => new BookOpenPageState();
 }
 
-class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTickerProviderStateMixin {
+class BookOpenPageState extends State<BookOpenPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   bool _canBeDragged = false;
   final double maxSlide = 300.0;
@@ -39,7 +42,9 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
     super.dispose();
   }
 
-  void toggle() => animationController.isDismissed ? animationController.forward() : animationController.reverse();
+  void toggle() => animationController.isDismissed
+      ? animationController.forward()
+      : animationController.reverse();
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +52,21 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
       onHorizontalDragStart: _onDragStart,
       onHorizontalDragUpdate: _onDragUpdate,
       onHorizontalDragEnd: _onDragEnd,
-      behavior: HitTestBehavior.translucent,
-      onTap: toggle,
+      behavior: HitTestBehavior.opaque,
+      // onTap: toggle,
       child: AnimatedBuilder(
         animation: animationController,
         builder: (context, _) {
           return Container(
             color: Colors.red.withOpacity(0),
-            // decoration: BoxDecoration(
-            //   gradient: bgGradientColor(ThemeController.isLightTheme)),
             child: Stack(
               children: <Widget>[
                 Obx(
-                  () => Container(
-                    decoration: BoxDecoration(gradient: bgGradientColor(ThemeController.isLightTheme)),
+                  () => AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                        gradient:
+                            bgGradientColor(ThemeController.isLightTheme)),
                   ),
                 ),
                 Transform.translate(
@@ -73,13 +79,16 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
                     child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.horizontal(right: Radius.circular(40 * animationController.value)),
+                        borderRadius: BorderRadius.horizontal(
+                            right: Radius.circular(
+                                40 * animationController.value)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.5),
                             // spreadRadius: 3,
                             blurRadius: 10,
-                            offset: Offset(10, 15), // changes position of shadow
+                            offset:
+                                Offset(10, 15), // changes position of shadow
                           ),
                         ],
                       ),
@@ -101,18 +110,21 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
                     child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular((40 * animationController.value)),
+                        borderRadius: BorderRadius.circular(
+                            (40 * animationController.value)),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.5),
                             // spreadRadius: 3,
                             blurRadius: 10,
-                            offset: Offset(22, 15), // changes position of shadow
+                            offset:
+                                Offset(22, 15), // changes position of shadow
                           ),
                         ],
                       ),
                       child: IgnorePointer(
-                        ignoring: animationController.value == 1.0 ? true : false,
+                        ignoring:
+                            animationController.value == 1.0 ? true : false,
                         child: widget.child,
                       ),
                       // child: widget.child,
@@ -121,7 +133,9 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
                 ),
                 Positioned(
                   top: 4.0 + MediaQuery.of(context).padding.top,
-                  left: 4 + animationController.value * maxSlide - (40 * animationController.value),
+                  left: 4 +
+                      animationController.value * maxSlide -
+                      (40 * animationController.value),
                   // left: ((1 - animationController.value )* 4) + animationController.value * maxSlide,
                   child: IconButton(
                     icon: Icon(Icons.menu),
@@ -164,7 +178,8 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
       return;
     }
     if (details.velocity.pixelsPerSecond.dx.abs() >= _kMinFlingVelocity) {
-      double visualVelocity = details.velocity.pixelsPerSecond.dx / MediaQuery.of(context).size.width;
+      double visualVelocity = details.velocity.pixelsPerSecond.dx /
+          MediaQuery.of(context).size.width;
 
       animationController.fling(velocity: visualVelocity);
     } else if (animationController.value < 0.5) {
@@ -176,14 +191,19 @@ class CustomGuitarDrawerState extends State<CustomGuitarDrawer> with SingleTicke
 }
 
 class MyDrawer extends StatelessWidget {
+  final textShadow = const Shadow(offset: Offset(5.0, 4.0),
+    blurRadius: 10.0,
+    color: Color.fromARGB(255, 0, 0, 0),);
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 300,
       height: double.infinity,
       child: Obx(
-        () => Container(
+        () => AnimatedContainer(
           color: themeColor(ThemeController.isLightTheme),
+          duration: Duration(milliseconds: 200),
           child: SafeArea(
             child: Theme(
               data: ThemeData(brightness: Brightness.dark),
@@ -191,12 +211,30 @@ class MyDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  SizedBox(
-                    height: 50,
+                  Container(
+                    height: 100,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'EH BROWSER',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          color: Colors.white,
+                          shadows: [textShadow]),
+                    ),
                   ),
-                  ListTile(
-                    leading: Icon(Icons.home),
-                    title: Text('HOME'),
+                   ListTile(
+                    leading: Icon(
+                      Icons.home,
+                      shadows: <Shadow>[textShadow],
+                    ),
+                    title: Text(
+                      'HOME',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        shadows: <Shadow>[textShadow],
+                      ),
+                    ),
                   ),
                 ],
               ),
