@@ -5,6 +5,7 @@ import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../common/const.dart';
@@ -14,12 +15,8 @@ import '../../model/gallery_model.dart';
 import '../../util/ehentai_crawler.dart';
 
 class HomePage extends StatefulWidget {
-  // String? sear;
-
   @override
   State<HomePage> createState() => _HomePageState();
-
-// HomePage({this.sear});
 }
 
 class _HomePageState extends State<HomePage> {
@@ -58,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         });
       }, () {
         next = '';
+        HapticFeedback.mediumImpact();
         setState(() {
           _homeController.galleryVisible = false;
         });
@@ -95,8 +93,7 @@ class _HomePageState extends State<HomePage> {
             future: _searchGallerys(),
             builder: (context, snapshot) {
               Widget child;
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  glist.length == 0) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 child = Container(
                   key: ValueKey(1),
                   child: LoadingAnimation(),
@@ -150,6 +147,7 @@ class _HomePageState extends State<HomePage> {
           ),
           onPressed: () {
             // await _searchGallerys(true);
+            HapticFeedback.mediumImpact();
             setState(() {
               isPrev = true;
               _homeController.galleryVisible = false;
@@ -175,6 +173,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           onPressed: () {
+            HapticFeedback.mediumImpact();
             setState(() {
               _homeController.galleryVisible = false;
             });
@@ -257,7 +256,7 @@ class _HomePageState extends State<HomePage> {
   _date_selector_callback(String date, BuildContext context) async {
     beforeDate = date;
     Navigator.pop(context);
-    // await _searchGallerys(false);
+    HapticFeedback.mediumImpact();
     setState(() {
       _homeController.galleryVisible = false;
     });

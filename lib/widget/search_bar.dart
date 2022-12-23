@@ -58,7 +58,7 @@ class EhenSearchBar extends StatefulWidget {
       this.defaultBorderRadius = 5.0,
       this.margin = const EdgeInsets.only(top: 20.0, bottom: 20.0),
       this.padding = const EdgeInsets.only(left: 0),
-      this.splashColor = Colors.pink,
+      this.splashColor = primary,
       this.focusNode,
       this.controller,
       this.onSubmitted,

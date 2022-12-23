@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehentai_browser/model/gallery_model.dart';
 import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:logger/logger.dart';
@@ -45,7 +47,8 @@ class _PicsPageState extends State<PicsPage> {
         print('wait for current loaded');
         return;
       }
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         curPos = _scrollController.position.pixels;
         getMorePics(); // 当滑到最底部时
       }
@@ -77,59 +80,55 @@ class _PicsPageState extends State<PicsPage> {
         actions: const <Widget>[DarkModeSwitch()],
       ),
       body: Stack(
-
         children: [
           _getBody(),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _nextPrevButton()
-            ],
+            children: [_nextPrevButton()],
           ),
         ],
       ),
     );
   }
 
-
   Widget _getBody() {
     return loadedUrl.isEmpty
         ? Container()
         : SingleChildScrollView(
-      controller: _scrollController,
-      child: Container(
-        padding: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT + 20),
-        child: Column(
-          children: [
-            Column(
-              children: loadedUrl,
-            ),
-            if (curPageNum != pics.length)
-              Container(
-                height: 50,
-                alignment: Alignment.center,
-                child: LoadingAnimation(),
-              )
-            else
-              Container(
-                height: 50,
-                alignment: Alignment.center,
-                child: Obx(
-                      () => Text(
-                    'This is the Bottom of the page!!',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: picsLoadHintColor(ThemeController.isLightTheme),
-                    ),
+            controller: _scrollController,
+            child: Container(
+              padding: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT + 20),
+              child: Column(
+                children: [
+                  Column(
+                    children: loadedUrl,
                   ),
-                ),
+                  if (curPageNum != pics.length)
+                    Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: LoadingAnimation(),
+                    )
+                  else
+                    Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: Obx(
+                        () => Text(
+                          'This is the Bottom of the page!!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                picsLoadHintColor(ThemeController.isLightTheme),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
-
 
   // 下一页和上一页
   Widget _nextPrevButton() {
@@ -152,6 +151,7 @@ class _PicsPageState extends State<PicsPage> {
             await getAllPicsList(g.gid, g.gtoken, thisPage);
             setState(() {
               getMorePics();
+              HapticFeedback.mediumImpact();
             });
           },
         ),
@@ -179,6 +179,7 @@ class _PicsPageState extends State<PicsPage> {
             thisPage += 1;
             loadedUrl = [];
             curPageNum = 0;
+            HapticFeedback.mediumImpact();
             await getAllPicsList(g.gid, g.gtoken, thisPage);
             setState(() {
               getMorePics();
@@ -207,15 +208,22 @@ class _PicsPageState extends State<PicsPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             child = Container();
           } else {
-            child = CachedNetworkImage(
-              imageUrl: snapshot.data!,
-              fit: BoxFit.contain,
-              // placeholder: (context, url) => SizedBox(height: 50,child: LoadingAnimation(),),
-              errorWidget: (context, url, error) => Container(),
+            child = GestureDetector(
+              onLongPress: () {
+                _openDownloadDialog();
+                HapticFeedback.heavyImpact();
+              },
+              child: CachedNetworkImage(
+                imageUrl: snapshot.data!,
+                fit: BoxFit.contain,
+                // placeholder: (context, url) => SizedBox(height: 50,child: LoadingAnimation(),),
+                errorWidget: (context, url, error) => Container(),
+              ),
             );
           }
 
-          return AnimatedSwitcher(duration: Duration(milliseconds: 500), child: child);
+          return AnimatedSwitcher(
+              duration: Duration(milliseconds: 500), child: child);
         },
       ));
     }
@@ -223,6 +231,64 @@ class _PicsPageState extends State<PicsPage> {
 
   getAllPicsList(String gid, String gtoken, int page) async {
     pics = await get_page_pics(gid, gtoken, page);
-    _logger.i('Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
+    _logger.i(
+        'Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
+  }
+
+  _openDownloadDialog() {
+    Get.defaultDialog(
+        title: "",
+        backgroundColor: Colors.grey.withOpacity(0),
+        content: ClipRRect(
+          clipBehavior: Clip.hardEdge,
+          child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+              child: Container(
+                height: 125,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.grey.withOpacity(0.3),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 40),
+                      child: const Text(
+                        "Save Image",
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton(
+                            onPressed: () => Get.back(),
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => Get.back(),
+                            child: Text(
+                              "Confirm",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ));
   }
 }

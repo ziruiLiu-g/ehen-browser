@@ -1,6 +1,7 @@
 import 'package:ehentai_browser/router/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -40,7 +41,8 @@ class _GalleryFlutterCardState extends State<GalleryFlutterCard> {
             InkWell(
               onTap: () => showDialog(
                 context: context,
-                builder: (BuildContext context) => TapablePhoto(widget.g.imgUrl!),
+                builder: (BuildContext context) =>
+                    TapablePhoto(widget.g.imgUrl!),
               ),
               child: Image.network(
                 widget.g.imgUrl!,
@@ -52,7 +54,10 @@ class _GalleryFlutterCardState extends State<GalleryFlutterCard> {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => Get.toNamed(Routes.Gallery, arguments: {'gallery': widget.g}),
+                onTap: () {
+                  Get.toNamed(Routes.Gallery, arguments: {'gallery': widget.g});
+                  HapticFeedback.mediumImpact();
+                },
                 child: Container(
                   // color: Colors.red,
                   padding: EdgeInsets.only(top: 5, bottom: 5, left: 15),
@@ -62,38 +67,49 @@ class _GalleryFlutterCardState extends State<GalleryFlutterCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Obx(
-                            () => Text(
+                        () => Text(
                           '${widget.g.title}  (${widget.g.image_count}P)',
                           maxLines: 3,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
-                            color: galleryTitleColor(ThemeController.isLightTheme),
+                            color:
+                                galleryTitleColor(ThemeController.isLightTheme),
                             decoration: TextDecoration.none,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Spacer(),
-                      getCataWidget(widget.g.cata!.split(':')[0].trim(), wid: 65, hei: 22),
+                      getCataWidget(widget.g.cata!.split(':')[0].trim(),
+                          wid: 65, hei: 22),
                       Spacer(),
                       Expanded(
                           child: Text(
                         'Rating: ${widget.g.rating}',
-                        style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                        style: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xffff9db5),
+                            decoration: TextDecoration.none),
                         overflow: TextOverflow.ellipsis,
                       )),
                       Expanded(
                           child: Text(
                         'Artist: ${widget.g.tags['artist']?.join(',')}',
                         // maxLines: 3,
-                        style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                        style: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xffff9db5),
+                            decoration: TextDecoration.none),
                         overflow: TextOverflow.ellipsis,
                       )),
                       Expanded(
                           child: Text(
                         'Post Date: ${widget.g.post}',
-                        style: const TextStyle(fontSize: 10, color: Color(0xffff9db5), decoration: TextDecoration.none),
+                        style: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xffff9db5),
+                            decoration: TextDecoration.none),
                         overflow: TextOverflow.ellipsis,
                       )),
                     ],

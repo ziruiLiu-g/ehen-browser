@@ -105,38 +105,37 @@ class BookOpenPageState extends State<BookOpenPage>
                       // ..scale(contentScale, contentScale, contentScale)
                       ..translate(
                         animationController.value * -50,
-                        animationController.value * -250,
+                        animationController.value * -50,
                         animationController.value * -25,
                       )
-                      ..rotateY(-math.pi / 3.6 * (animationController.value))
+                      ..rotateY(-math.pi / 3.4 * (animationController.value))
                       ..scale(
-                        1.0 - (0.65 * animationController.value),
-                        1.0 - (0.8 * animationController.value),
+                        1.0 - (0.67 * animationController.value),
+                        1.0 - (0.75 * animationController.value),
                         1.0 - (0.65 * animationController.value),
                       ),
                     alignment: Alignment.centerRight,
                     child: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              (40 * animationController.value)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              // spreadRadius: 3,
-                              blurRadius: 10,
-                              offset:
-                                  Offset(30, 30), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: IgnorePointer(
-                          child: widget.child,
-                          ignoring:
-                              animationController.value == 1.0 ? true : false,
-                        )
-                        // child: widget.child,
-                        ),
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                            (40 * animationController.value)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            // spreadRadius: 3,
+                            blurRadius: 10,
+                            offset:
+                                Offset(30, 30), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: IgnorePointer(
+                        child: widget.child,
+                        ignoring:
+                            animationController.value == 1.0 ? true : false,
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
