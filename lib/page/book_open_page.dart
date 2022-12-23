@@ -103,32 +103,40 @@ class BookOpenPageState extends State<BookOpenPage>
                     transform: Matrix4.identity()
                       ..setEntry(3, 2, -0.001)
                       // ..scale(contentScale, contentScale, contentScale)
-                      ..translate(animationController.value * -25)
-                      ..rotateY(-math.pi / 3.5 * (animationController.value))
-                      ..scale(1.0 - (0.6 * animationController.value)),
+                      ..translate(
+                        animationController.value * -50,
+                        animationController.value * -250,
+                        animationController.value * -25,
+                      )
+                      ..rotateY(-math.pi / 3.6 * (animationController.value))
+                      ..scale(
+                        1.0 - (0.65 * animationController.value),
+                        1.0 - (0.8 * animationController.value),
+                        1.0 - (0.65 * animationController.value),
+                      ),
                     alignment: Alignment.centerRight,
                     child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                            (40 * animationController.value)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            // spreadRadius: 3,
-                            blurRadius: 10,
-                            offset:
-                                Offset(22, 15), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: IgnorePointer(
-                        ignoring:
-                            animationController.value == 1.0 ? true : false,
-                        child: widget.child,
-                      ),
-                      // child: widget.child,
-                    ),
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              (40 * animationController.value)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              // spreadRadius: 3,
+                              blurRadius: 10,
+                              offset:
+                                  Offset(30, 30), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: IgnorePointer(
+                          child: widget.child,
+                          ignoring:
+                              animationController.value == 1.0 ? true : false,
+                        )
+                        // child: widget.child,
+                        ),
                   ),
                 ),
                 Positioned(
@@ -191,9 +199,11 @@ class BookOpenPageState extends State<BookOpenPage>
 }
 
 class MyDrawer extends StatelessWidget {
-  final textShadow = const Shadow(offset: Offset(5.0, 4.0),
+  final textShadow = const Shadow(
+    offset: Offset(5.0, 4.0),
     blurRadius: 10.0,
-    color: Color.fromARGB(255, 0, 0, 0),);
+    color: Color.fromARGB(255, 0, 0, 0),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +233,7 @@ class MyDrawer extends StatelessWidget {
                           shadows: [textShadow]),
                     ),
                   ),
-                   ListTile(
+                  ListTile(
                     leading: Icon(
                       Icons.home,
                       shadows: <Shadow>[textShadow],
