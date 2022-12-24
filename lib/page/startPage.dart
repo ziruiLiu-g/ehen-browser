@@ -31,9 +31,7 @@ class _StartPageState extends State<StartPage> {
           decoration: TextDecoration.none,
         ),
       ),
-      nextScreen: BookOpenPage(
-        child: HomePage(),
-      ),
+      nextScreen: Container(),
       splashTransition: SplashTransition.fadeTransition,
     );
   }

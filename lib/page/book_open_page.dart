@@ -10,7 +10,7 @@ import '../util/color.dart';
 import '../widget/dark_mode_switcher.dart';
 
 class BookOpenPage extends StatefulWidget {
-  final Widget child;
+  final List<Widget> child;
 
   const BookOpenPage({Key? key, required this.child}) : super(key: key);
 
@@ -24,6 +24,8 @@ class BookOpenPage extends StatefulWidget {
 class BookOpenPageState extends State<BookOpenPage>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController;
+  late PageController pageController;
+
   bool _canBeDragged = false;
   final double maxSlide = 300.0;
 
@@ -34,6 +36,16 @@ class BookOpenPageState extends State<BookOpenPage>
       vsync: this,
       duration: Duration(milliseconds: 250),
     );
+
+    pageController = PageController(
+      initialPage: 0,
+      keepPage: true,
+    );
+    pageController.addListener(() {
+      double offset = pageController.offset;
+      double? page = pageController.page;
+      print("now page $page");
+    });
   }
 
   @override
@@ -45,6 +57,8 @@ class BookOpenPageState extends State<BookOpenPage>
   void toggle() => animationController.isDismissed
       ? animationController.forward()
       : animationController.reverse();
+
+  void backWardtoggle() => animationController.reverse();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +106,7 @@ class BookOpenPageState extends State<BookOpenPage>
                           ),
                         ],
                       ),
-                      child: MyDrawer(),
+                      child: MyDrawer(pageController),
                     ),
                   ),
                 ),
@@ -102,7 +116,7 @@ class BookOpenPageState extends State<BookOpenPage>
                   child: Transform(
                     transform: Matrix4.identity()
                       ..setEntry(3, 2, -0.001)
-                      // ..scale(contentScale, contentScale, contentScale)
+                    // ..scale(contentScale, contentScale, contentScale)
                       ..translate(
                         animationController.value * -50,
                         animationController.value * -50,
@@ -116,26 +130,33 @@ class BookOpenPageState extends State<BookOpenPage>
                       ),
                     alignment: Alignment.centerRight,
                     child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                            (40 * animationController.value)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            // spreadRadius: 3,
-                            blurRadius: 10,
-                            offset:
-                                Offset(30, 30), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: IgnorePointer(
-                        child: widget.child,
-                        ignoring:
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                              (40 * animationController.value)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              // spreadRadius: 3,
+                              blurRadius: 10,
+                              offset:
+                              Offset(30, 30), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: InkWell(
+                          onTap: () => backWardtoggle(),
+                          child: IgnorePointer(
+                            child: PageView(
+                              controller: pageController,
+                              scrollDirection: Axis.vertical,
+                              children: widget.child,
+                              allowImplicitScrolling: true,
+                            ),
+                            ignoring:
                             animationController.value == 1.0 ? true : false,
-                      ),
-                    ),
+                          ),
+                        )),
                   ),
                 ),
                 Positioned(
@@ -198,6 +219,10 @@ class BookOpenPageState extends State<BookOpenPage>
 }
 
 class MyDrawer extends StatelessWidget {
+  PageController pageController;
+
+  MyDrawer(this.pageController);
+
   final textShadow = const Shadow(
     offset: Offset(5.0, 4.0),
     blurRadius: 10.0,
@@ -210,7 +235,7 @@ class MyDrawer extends StatelessWidget {
       width: 300,
       height: double.infinity,
       child: Obx(
-        () => AnimatedContainer(
+            () => AnimatedContainer(
           color: themeColor(ThemeController.isLightTheme),
           duration: Duration(milliseconds: 200),
           child: SafeArea(
@@ -233,6 +258,13 @@ class MyDrawer extends StatelessWidget {
                     ),
                   ),
                   ListTile(
+                    onTap: () {
+                      pageController.animateToPage(
+                        0,
+                        curve: Curves.ease,
+                        duration: Duration(milliseconds: 200),
+                      );
+                    },
                     leading: Icon(
                       Icons.home,
                       shadows: <Shadow>[textShadow],
@@ -241,6 +273,28 @@ class MyDrawer extends StatelessWidget {
                       'HOME',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        shadows: <Shadow>[textShadow],
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      pageController.animateToPage(
+                        1,
+                        curve: Curves.ease,
+                        duration: Duration(milliseconds: 200),
+                      );
+                    },
+                    leading: Icon(
+                      Icons.star_border_outlined,
+                      shadows: <Shadow>[textShadow],
+                    ),
+                    title: Text(
+                      'Favorite',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                         shadows: <Shadow>[textShadow],
                       ),
                     ),

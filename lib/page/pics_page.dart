@@ -8,6 +8,7 @@ import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:logger/logger.dart';
@@ -210,7 +211,7 @@ class _PicsPageState extends State<PicsPage> {
           } else {
             child = GestureDetector(
               onLongPress: () {
-                _openDownloadDialog();
+                _openDownloadDialog(snapshot.data!);
                 HapticFeedback.heavyImpact();
               },
               child: CachedNetworkImage(
@@ -235,60 +236,69 @@ class _PicsPageState extends State<PicsPage> {
         'Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
   }
 
-  _openDownloadDialog() {
+  _openDownloadDialog(String url) {
     Get.defaultDialog(
-        title: "",
-        backgroundColor: Colors.grey.withOpacity(0),
-        content: ClipRRect(
-          clipBehavior: Clip.hardEdge,
-          child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-              child: Container(
-                height: 125,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Colors.grey.withOpacity(0.3),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 40),
-                      child: const Text(
-                        "Save Image",
-                        style: TextStyle(color: Colors.white, fontSize: 25),
-                      ),
+      title: "",
+      backgroundColor: Colors.grey.withOpacity(0),
+      content: ClipRRect(
+        clipBehavior: Clip.hardEdge,
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+            child: Container(
+              height: 125,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey.withOpacity(0.3),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 40),
+                    child: const Text(
+                      "Save Image",
+                      style: TextStyle(color: Colors.white, fontSize: 25),
                     ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TextButton(
-                            onPressed: () => Get.back(),
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          onPressed: () => Get.back(),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
                           ),
-                          TextButton(
-                            onPressed: () => Get.back(),
-                            child: Text(
-                              "Confirm",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+                        ),
+                        TextButton(
+                          onPressed: () => {
+                            _saveNetworkImage(url),
+                            Get.back()
+                          },
+                          child: Text(
+                            "Confirm",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )),
-        ));
+                  ),
+                ],
+              ),
+            )),
+      ),
+    );
+  }
+
+  void _saveNetworkImage(String path) async {
+    GallerySaver.saveImage(path);
+    _logger.i('Saving photo, url: $path');
   }
 }
