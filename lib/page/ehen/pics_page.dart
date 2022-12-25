@@ -13,12 +13,12 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:logger/logger.dart';
 
-import '../common/const.dart';
-import '../controller/theme_controller.dart';
-import '../util/color.dart';
-import '../widget/bottom_blur_navigator.dart';
-import '../widget/dark_mode_switcher.dart';
-import '../util/image_save_load.dart';
+import '../../common/const.dart';
+import '../../controller/theme_controller.dart';
+import '../../util/color.dart';
+import '../../widget/bottom_blur_navigator.dart';
+import '../../widget/dark_mode_switcher.dart';
+import '../../util/image_save_load.dart';
 
 class PicsPage extends StatefulWidget {
   @override

@@ -1,5 +1,6 @@
-import 'package:ehentai_browser/page/book_open_page_v2.dart';
-import 'package:ehentai_browser/page/home/home.dart';
+import 'package:ehentai_browser/page/ehen/book_open_page_v2.dart';
+import 'package:ehentai_browser/page/ehen/home/home.dart';
+import 'package:ehentai_browser/page/jabl/jhome.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
       ),
       getPages: EhenRouters.pages,
       home: BookOpenPageV2(
-        child: [HomePage()],
+        child: [HomePage(), JHomePage()],
       ),
     );
   }

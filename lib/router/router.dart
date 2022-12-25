@@ -1,9 +1,9 @@
-import 'package:ehentai_browser/page/gallery_page.dart';
-import 'package:ehentai_browser/page/pics_page.dart';
+import 'package:ehentai_browser/page/ehen/gallery_page.dart';
 import 'package:ehentai_browser/router/routes.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
-import '../page/home/home.dart';
+import '../page/ehen/home/home.dart';
+import '../page/ehen/pics_page.dart';
 
 abstract class EhenRouters {
   static final pages = [

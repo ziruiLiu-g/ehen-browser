@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../controller/theme_controller.dart';
-import '../util/color.dart';
-import '../widget/dark_mode_switcher.dart';
+import '../../controller/theme_controller.dart';
+import '../../util/color.dart';
+import '../../widget/dark_mode_switcher.dart';
 
 class BookOpenPageV2 extends StatefulWidget {
   final List<Widget> child;

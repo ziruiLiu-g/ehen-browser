@@ -27,7 +27,7 @@ Future<ui.Image> loadImage(String url) async {
     final ui.Image image = frame.image;
     completer.complete(image);
     if (listener != null) {
-      stream.removeListener(listener);
+        stream.removeListener(listener);
     }
   });
   stream.addListener(listener);

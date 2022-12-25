@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../common/const.dart';
-import '../../../controller/cata_controller.dart';
-
+import '../../../../common/const.dart';
+import '../../../../controller/cata_controller.dart';
 class EhenCheck extends StatefulWidget {
   Function(int) getCataFunc;
 
