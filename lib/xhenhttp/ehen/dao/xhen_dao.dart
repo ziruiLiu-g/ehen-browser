@@ -11,10 +11,10 @@ import '../request/base_request.dart';
 import '../request/xhen_request.dart';
 
 class XhenDao {
-  static const XHENTAIL_PREFIX = 'https://e-hentai.org/?';
+  static const XHENTAIL_PREFIX = 'https://e-hentai.org/';
   static const XHENTAIL_GALLERY_PREFIX = 'https://e-hentai.org/g/';
   static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
-  static const header = {
+  static var header = {
     'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) ' +
         'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36',
     "Keep-Alive": "timeout=8",
@@ -50,9 +50,16 @@ class XhenDao {
     return result;
   }
 
+  static Future<Document> requestPopular() async {
+    var url = XHENTAIL_PREFIX + 'popular';
+    _logger.i('Collecting data from: $url');
+    var html =  await _get_html_respone(url);
+    return parse(html);
+  }
+
   /// request galleries metadata for home page
   static Future<String> requestData({String? search, String? cataNum, String? next, String? prev, String? dateBefore}) async {
-    var url = XHENTAIL_PREFIX;
+    var url = XHENTAIL_PREFIX + '?';
     if (cataNum != null && cataNum.isNotEmpty) {
       url += '&f_cats=$cataNum';
     }
@@ -75,11 +82,7 @@ class XhenDao {
 
     _logger.i('Collecting data from: $url');
 
-    var response = await http.get(Uri.parse(url), headers: header);
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    return '<html>error! status:${response.statusCode}</html>';
+    return await _get_html_respone(url);
   }
 
   /// parse galleries metadata as list
@@ -97,25 +100,37 @@ class XhenDao {
       gplist.add([gparams![gparams.length - 3], gparams[gparams.length - 2]]);
     }
 
-    String result = await get_gallery(gplist) as String;
-    var jresult = jsonDecode(result)['gmetadata'];
-    if (jresult == null || jresult == '') {
-      glist.clear();
-      return glist;
+    var tempList = [];
+    int curIndex = 0;
+    while (curIndex + 25 < gplist.length) {
+      var tmp = await get_gallery(gplist.sublist(curIndex, curIndex + 25));
+      tempList.add(tmp);
+      curIndex += 25;
     }
-    for (int gindex = 0; gindex < jresult.length; gindex++) {
-      GalleryModel gl = GalleryModel(gplist[gindex][0].toString(), gplist[gindex][1].toString(),
-          imgUrl: jresult[gindex]['thumb'].toString(),
-          title: jresult[gindex]['title'].toString(),
-          image_count: jresult[gindex]['filecount'].toString(),
-          cata: jresult[gindex]['category'].toString(),
-          tags: jresult[gindex]['tags'] as List,
-          rating: jresult[gindex]['rating'].toString(),
-          post: jresult[gindex]['posted'].toString());
-      glist.add(gl);
+    var tmp = await get_gallery(gplist.sublist(curIndex, gplist.length));
+    tempList.add(tmp);
+
+    for (var result in tempList) {
+      var jresult = jsonDecode(result)['gmetadata'];
+      if (jresult == null || jresult == '') {
+        glist.clear();
+        return glist;
+      }
+      for (int gindex = 0; gindex < jresult.length; gindex++) {
+        GalleryModel gl = GalleryModel(gplist[gindex][0].toString(), gplist[gindex][1].toString(),
+            imgUrl: jresult[gindex]['thumb'].toString(),
+            title: jresult[gindex]['title'].toString(),
+            image_count: jresult[gindex]['filecount'].toString(),
+            cata: jresult[gindex]['category'].toString(),
+            tags: jresult[gindex]['tags'] as List,
+            rating: jresult[gindex]['rating'].toString(),
+            post: jresult[gindex]['posted'].toString());
+        glist.add(gl);
+      }
     }
     return glist;
   }
+
   /// parse galleries metadata
   static List<String?> get_gallery_list(document) {
     // use css selector
@@ -157,11 +172,7 @@ class XhenDao {
     var url = XHENTAIL_GALLERY_PREFIX;
     url += '${gid}/${token}/';
 
-    var response = await http.get(Uri.parse(url), headers: header);
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    return '<html>error! status:${response.statusCode}</html>';
+    return await _get_html_respone(url);
   }
 
   /// check whether the page is sensitive page
@@ -171,12 +182,9 @@ class XhenDao {
     if (showImgUrls.length == 3) {
       var url = showImgUrls[2].attributes['href'];
       var newHead = header;
-      newHead['cookie'] = 'nw=1';
-      var response = await http.get(Uri.parse(url!), headers: newHead);
-      if (response.statusCode == 200) {
-        return response.body;
-      }
-      return '<html>error! status:${response.statusCode}</html>';
+      newHead.putIfAbsent('cookie', () => 'nw=1');
+
+      return _get_html_respone(url!);
     } else {
       return html;
     }
@@ -239,11 +247,7 @@ class XhenDao {
     var url = XHENTAIL_GALLERY_PREFIX;
     url += '${gid}/${token}/?p=${page}';
 
-    var response = await http.get(Uri.parse(url), headers: header);
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    return '<html>error! status:${response.statusCode}</html>';
+    return await _get_html_respone(url);
   }
 
   /// get the pics page of the gallery
@@ -288,5 +292,13 @@ class XhenDao {
     }
 
     return '';
+  }
+
+  static _get_html_respone(String url) async {
+    var response = await http.get(Uri.parse(url), headers: header);
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return '<html>error! status:${response.statusCode}</html>';
   }
 }

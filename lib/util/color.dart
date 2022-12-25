@@ -93,6 +93,10 @@ final cataMap = {
 };
 
 
+Color HomePageTabBgColor(bool x) {
+  return x ? Colors.white : darkPrimary;
+}
+
 Color galleryTitleColor(bool x) {
   return x ? Colors.black : Colors.white;
 }

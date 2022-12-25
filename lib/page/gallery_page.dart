@@ -1,5 +1,6 @@
 import 'package:ehentai_browser/model/gallery_model.dart';
 import 'package:ehentai_browser/router/routes.dart';
+import 'package:ehentai_browser/util/view_util.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,7 +126,7 @@ class _GalleryPageState extends State<GalleryPage> {
             }
 
             return AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
+              duration: Duration(milliseconds: 200),
               child: child,
             );
           },
@@ -296,7 +297,6 @@ class _GalleryPageState extends State<GalleryPage> {
     html = await XhenDao.checkIfSensitivePage(html);
     cover = XhenDao.get_Gallery_Show_Img(html);
     var cache = await downloadImageBytes(cover);
-
     g.maxPage = XhenDao.get_Max_Page(html);
 
     return Container(
@@ -307,7 +307,7 @@ class _GalleryPageState extends State<GalleryPage> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0),
         borderRadius: const BorderRadius.all(
-          Radius.circular(5.0),
+          Radius.circular(10.0),
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
