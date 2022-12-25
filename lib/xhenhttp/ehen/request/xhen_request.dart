@@ -1,4 +1,4 @@
-import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
+import 'base_request.dart';
 
 class XhenRequest extends BaseRequest {
   @override
