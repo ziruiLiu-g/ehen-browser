@@ -4,6 +4,10 @@ import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:logger/logger.dart';
+
+final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
 
 /// pic cache and load
 Future<Uint8List?> downloadImageBytes(String url) async {
@@ -28,4 +32,9 @@ Future<ui.Image> loadImage(String url) async {
   });
   stream.addListener(listener);
   return completer.future;
+}
+
+saveNetworkImage(String path) async {
+  GallerySaver.saveImage(path);
+  _logger.i('Saving photo, url: $path');
 }

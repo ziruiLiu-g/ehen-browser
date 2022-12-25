@@ -5,10 +5,10 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehentai_browser/model/gallery_model.dart';
 import 'package:ehentai_browser/widget/loading_animation.dart';
+import 'package:ehentai_browser/xhenhttp/ehen/dao/xhen_dao.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:logger/logger.dart';
@@ -16,9 +16,9 @@ import 'package:logger/logger.dart';
 import '../common/const.dart';
 import '../controller/theme_controller.dart';
 import '../util/color.dart';
-import '../util/ehentai_crawler.dart';
 import '../widget/bottom_blur_navigator.dart';
 import '../widget/dark_mode_switcher.dart';
+import '../util/image_save_load.dart';
 
 class PicsPage extends StatefulWidget {
   @override
@@ -203,7 +203,7 @@ class _PicsPageState extends State<PicsPage> {
   FutureOr<dynamic> Function()? getpics() {
     for (int i = curPageNum; i < min(curPageNum + 5, pics.length); i++) {
       loadedUrl.add(FutureBuilder<String>(
-        future: get_img(pics[i]),
+        future: XhenDao.get_pics(pics[i]),
         builder: (context, AsyncSnapshot<String> snapshot) {
           Widget child;
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -231,7 +231,7 @@ class _PicsPageState extends State<PicsPage> {
   }
 
   getAllPicsList(String gid, String gtoken, int page) async {
-    pics = await get_page_pics(gid, gtoken, page);
+    pics = await XhenDao.get_page_pics(gid, gtoken, page);
     _logger.i(
         'Loading pics from gid: $gid, gtoken: $gtoken, page: $page, curPageNum: $curPageNum');
   }
@@ -276,7 +276,7 @@ class _PicsPageState extends State<PicsPage> {
                         ),
                         TextButton(
                           onPressed: () => {
-                            _saveNetworkImage(url),
+                            saveNetworkImage(url),
                             Get.back()
                           },
                           child: Text(
@@ -295,10 +295,5 @@ class _PicsPageState extends State<PicsPage> {
             )),
       ),
     );
-  }
-
-  void _saveNetworkImage(String path) async {
-    GallerySaver.saveImage(path);
-    _logger.i('Saving photo, url: $path');
   }
 }

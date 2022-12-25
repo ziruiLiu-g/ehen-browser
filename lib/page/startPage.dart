@@ -5,9 +5,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../util/color.dart';
-import 'book_open_page.dart';
-import 'home/home.dart';
-
 class StartPage extends StatefulWidget {
   @override
   _StartPageState createState() => _StartPageState();

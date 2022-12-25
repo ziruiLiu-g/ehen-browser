@@ -9,7 +9,6 @@ import 'common/global.dart';
 import 'localdb/local_storage.dart';
 import 'router/router.dart';
 import 'util/color.dart';
-import 'page/book_open_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,12 +44,6 @@ class MyApp extends StatelessWidget {
       home: BookOpenPageV2(
         child: [HomePage(), HomePage()],
       ),
-      // home: BookOpenPage(
-      //   child: PageView(
-      //     scrollDirection: Axis.vertical,
-      //     children: [HomePage(), HomePage()],
-      //   )
-      // ),
     );
   }
 

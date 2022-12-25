@@ -1,7 +1,8 @@
 import 'package:ehentai_browser/xhenhttp/core/dio_adaptor.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_error.dart';
 import 'package:ehentai_browser/xhenhttp/core/hi_net_adaptor.dart';
-import 'package:ehentai_browser/xhenhttp/request/base_request.dart';
+
+import '../ehen/request/base_request.dart';
 
 class HiNet {
   HiNet._();

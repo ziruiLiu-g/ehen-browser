@@ -56,8 +56,8 @@ class EhenSearchBar extends StatefulWidget {
       {super.key,
       this.hint = "",
       this.defaultBorderRadius = 5.0,
-      this.margin = const EdgeInsets.only(top: 20.0, bottom: 20.0),
-      this.padding = const EdgeInsets.only(left: 0),
+      this.margin = const EdgeInsets.only(top: 20.0, bottom: 20.0, left: 60, right: 60),
+      this.padding = const EdgeInsets.only(right: 0),
       this.splashColor = primary,
       this.focusNode,
       this.controller,
@@ -110,7 +110,7 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
           ///左侧的返回按钮
           // buildLeftBackWidget(),
           ///右侧的搜索框内容区域
-          buildContentContainer(),
+          Expanded(child: buildContentContainer()),
         ],
       ),
     );
@@ -152,9 +152,6 @@ class SearchTextFieldBarState extends State<EhenSearchBar> {
   Container buildContentContainer() {
     return Container(
       height: widget.height,
-
-      ///获取当前StatelessWidget的宽度
-      width: MediaQuery.of(context).size.width - 140,
 
       ///对齐方式
       alignment: Alignment.center,

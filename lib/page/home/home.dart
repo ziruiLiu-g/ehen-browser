@@ -12,14 +12,14 @@ import '../../common/const.dart';
 import '../../controller/cata_controller.dart';
 import '../../controller/home_controller.dart';
 import '../../model/gallery_model.dart';
-import '../../util/ehentai_crawler.dart';
+import '../../xhenhttp/ehen/dao/xhen_dao.dart';
 
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final ctaController = Get.put(CataController());
   final _scrollController = ScrollController();
   final _homeController = Get.put(HomeController());
@@ -115,16 +115,16 @@ class _HomePageState extends State<HomePage> {
 
   // 后端加载
   _searchGallerys({List<GalleryModel>? list}) async {
-    var htmlDoc = await loadGallerysHtml(isPrev!,
+    var htmlDoc = await XhenDao.loadGallerysHtml(isPrev!,
         search: _homeController.sear,
         cata: cata,
         prev: prev,
         next: next,
         dateBefore: beforeDate);
 
-    glist = await getGalleryList(htmlDoc, list: list);
-    next = getGalleryNextPage(htmlDoc);
-    prev = getGalleryPrevPage(htmlDoc);
+    glist = await XhenDao.getGalleryList(htmlDoc, list: list);
+    next = XhenDao.getGalleryNextPage(htmlDoc);
+    prev = XhenDao.getGalleryPrevPage(htmlDoc);
     beforeDate = null;
     isPrev = false;
 
@@ -288,4 +288,7 @@ class _HomePageState extends State<HomePage> {
 
     return content;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

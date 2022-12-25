@@ -2,12 +2,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:ehentai_browser/controller/book_open_controller.dart';
-import 'package:ehentai_browser/page/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../common/const.dart';
 import '../controller/theme_controller.dart';
 import '../util/color.dart';
 import '../widget/dark_mode_switcher.dart';
@@ -17,15 +15,13 @@ class BookOpenPageV2 extends StatefulWidget {
 
   const BookOpenPageV2({Key? key, required this.child}) : super(key: key);
 
-  static BookOpenPageV2State? of(BuildContext context) =>
-      context.findAncestorStateOfType<BookOpenPageV2State>();
+  static BookOpenPageV2State? of(BuildContext context) => context.findAncestorStateOfType<BookOpenPageV2State>();
 
   @override
   BookOpenPageV2State createState() => new BookOpenPageV2State();
 }
 
-class BookOpenPageV2State extends State<BookOpenPageV2>
-    with SingleTickerProviderStateMixin {
+class BookOpenPageV2State extends State<BookOpenPageV2> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late PageController pageController;
   BookOpenController bookOpenController = Get.put(BookOpenController());
@@ -47,12 +43,12 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
       viewportFraction: 1,
     );
 
-    pageController.addListener(() {
-      //PageView滑动的距离
-      double offset = pageController.offset;
-      //当前显示的页面的索引
-      double? page = pageController.page;
-    });
+    // pageController.addListener(() {
+    //   //PageView滑动的距离
+    //   double offset = pageController.offset;
+    //   //当前显示的页面的索引
+    //   double? page = pageController.page;
+    // });
   }
 
   @override
@@ -62,9 +58,7 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
     super.dispose();
   }
 
-  void toggle() => animationController.isDismissed
-      ? animationController.forward()
-      : animationController.reverse();
+  void toggle() => animationController.isDismissed ? animationController.forward() : animationController.reverse();
 
   void backWardtoggle() => animationController.reverse();
 
@@ -86,11 +80,10 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
                 Obx(
                   () => AnimatedContainer(
                     duration: Duration(milliseconds: 50),
-                    decoration: BoxDecoration(
-                        gradient:
-                            bgGradientColor(ThemeController.isLightTheme)),
+                    decoration: BoxDecoration(gradient: bgGradientColor(ThemeController.isLightTheme)),
                   ),
                 ),
+
                 PageView(
                   onPageChanged: (int index) {
                     bookOpenController.currentIndex = index;
@@ -113,23 +106,19 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
                     child: Transform(
                       transform: Matrix4.identity()
                         ..setEntry(3, 2, -0.001)
-                        ..rotateY(math.pi * (1 - animationController.value) +
-                            (math.pi * animationController.value / 10)),
+                        ..rotateY(math.pi * (1 - animationController.value) + (math.pi * animationController.value / 10)),
                       // ..rotateY(math.pi * animationController.value /10),
                       alignment: Alignment.centerLeft,
                       child: Container(
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.horizontal(
-                              right: Radius.circular(
-                                  40 * animationController.value)),
+                          borderRadius: BorderRadius.horizontal(right: Radius.circular(40 * animationController.value)),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.5),
                               // spreadRadius: 3,
                               blurRadius: 10,
-                              offset:
-                                  Offset(10, 15), // changes position of shadow
+                              offset: Offset(10, 15), // changes position of shadow
                             ),
                           ],
                         ),
@@ -140,9 +129,7 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
                 ),
                 Positioned(
                   top: 4.0 + MediaQuery.of(context).padding.top,
-                  left: 4 +
-                      animationController.value * maxSlide -
-                      (40 * animationController.value),
+                  left: 4 + animationController.value * maxSlide - (40 * animationController.value),
                   child: IconButton(
                     icon: Icon(Icons.menu),
                     onPressed: toggle,
@@ -172,9 +159,8 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
             transform: Matrix4.identity()
               ..setEntry(3, 2, -0.001)
               ..translate(
-                animationController.value * -50,
-                animationController.value * -50,
-                animationController.value * -25,
+                animationController.value * -(MediaQuery.of(context).size.width / 12),
+                // animationController.value * -(MediaQuery.of(context).size.height / 12),
               )
               ..rotateY(-math.pi / 3.4 * (animationController.value))
               ..scale(
@@ -186,8 +172,7 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
             child: Container(
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular((40 * animationController.value)),
+                  borderRadius: BorderRadius.circular((40 * animationController.value)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.5),
@@ -233,8 +218,7 @@ class BookOpenPageV2State extends State<BookOpenPageV2>
       return;
     }
     if (details.velocity.pixelsPerSecond.dx.abs() >= _kMinFlingVelocity) {
-      double visualVelocity = details.velocity.pixelsPerSecond.dx /
-          MediaQuery.of(context).size.width;
+      double visualVelocity = details.velocity.pixelsPerSecond.dx / MediaQuery.of(context).size.width;
 
       animationController.fling(velocity: visualVelocity);
     } else if (animationController.value < 0.5) {
@@ -278,15 +262,11 @@ class MyDrawer extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       'EH BROWSER',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: Colors.white,
-                          shadows: [textShadow]),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white, shadows: [textShadow]),
                     ),
                   ),
-                  _menuWidget(
-                      0, Icons.photo_size_select_actual_outlined, 'Ehentai'),
+                  _menuWidget(0, Icons.photo_size_select_actual_outlined, 'Ehentai'),
                   _menuWidget(1, Icons.video_library_outlined, 'Video'),
                 ],
               ),
@@ -311,17 +291,13 @@ class MyDrawer extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: ThemeController.isLightTheme
-                  ? Color(0xffe5dacd).withOpacity(
-                      bookOpenController.currentIndex == index ? 1 : 0)
-                  : const Color(0xffe5664d).withOpacity(
-                      bookOpenController.currentIndex == index ? 1 : 0),
+                  ? Color(0xffe5dacd).withOpacity(bookOpenController.currentIndex == index ? 1 : 0)
+                  : const Color(0xffe5664d).withOpacity(bookOpenController.currentIndex == index ? 1 : 0),
               boxShadow: [
                 BoxShadow(
                   color: ThemeController.isLightTheme
-                      ? Colors.black.withOpacity(
-                          bookOpenController.currentIndex == index ? 0.7 : 0)
-                      : Colors.black.withOpacity(
-                          bookOpenController.currentIndex == index ? 1 : 0),
+                      ? Colors.black.withOpacity(bookOpenController.currentIndex == index ? 0.7 : 0)
+                      : Colors.black.withOpacity(bookOpenController.currentIndex == index ? 1 : 0),
                   blurRadius: 7,
                   offset: Offset(0, 5), // changes position of shadow
                 ),

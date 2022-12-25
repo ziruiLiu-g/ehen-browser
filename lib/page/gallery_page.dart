@@ -1,14 +1,9 @@
 import 'package:ehentai_browser/model/gallery_model.dart';
-import 'package:ehentai_browser/page/home/home.dart';
 import 'package:ehentai_browser/router/routes.dart';
-import 'package:ehentai_browser/util/ehentai_crawler.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:logger/logger.dart';
 
 import '../common/const.dart';
@@ -20,6 +15,7 @@ import '../widget/cata_widget.dart';
 import '../widget/dark_mode_switcher.dart';
 import '../widget/full_screen_photo.dart';
 import '../widget/loading_animation.dart';
+import '../xhenhttp/ehen/dao/xhen_dao.dart';
 
 class GalleryPage extends StatefulWidget {
   @override
@@ -296,12 +292,12 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   Future<Container> get_first_img(String gid, String gtoken) async {
-    var html = await requestGalleryData(gid, gtoken);
-    html = await checkIfSensitivePage(html);
-    cover = get_Gallery_Show_Img(html);
+    var html = await XhenDao.requestGalleryData(gid, gtoken);
+    html = await XhenDao.checkIfSensitivePage(html);
+    cover = XhenDao.get_Gallery_Show_Img(html);
     var cache = await downloadImageBytes(cover);
 
-    g.maxPage = get_Max_Page(html);
+    g.maxPage = XhenDao.get_Max_Page(html);
 
     return Container(
       child: Image.memory(
