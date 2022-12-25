@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin,
             children: [
               Obx(() => AnimatedContainer(
                 color: HomePageTabBgColor(ThemeController.isLightTheme),
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 duration: Duration(milliseconds: 200),
                 child: _tabBar(),
               )),

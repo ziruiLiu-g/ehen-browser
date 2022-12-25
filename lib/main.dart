@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       ),
       getPages: EhenRouters.pages,
       home: BookOpenPageV2(
-        child: [JHomePage(), HomePage()],
+        child: [HomePage(), JHomePage()],
       ),
     );
   }

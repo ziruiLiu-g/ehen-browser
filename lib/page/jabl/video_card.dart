@@ -1,5 +1,4 @@
 import 'package:ehentai_browser/model/video_gallery_model.dart';
-import 'package:ehentai_browser/widget/loading_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -51,7 +50,7 @@ class _VideoCardState extends State<VideoCard> {
     return InkWell(
       onTap: () {},
       child: SizedBox(
-        height: 200,
+        height: 210,
         child: Card(
           margin: EdgeInsets.only(left: 4, right: 4, bottom: 8),
           child: ClipRRect(
@@ -131,7 +130,7 @@ class _VideoCardState extends State<VideoCard> {
       children: [
         if (iconData != null) Icon(iconData, color: Colors.white, size: 12),
         Padding(
-          padding: EdgeInsets.only(left: 3),
+          padding: EdgeInsets.only(left: 3,bottom: 5),
           child: Text(
             count,
             style: TextStyle(
