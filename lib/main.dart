@@ -12,7 +12,9 @@ import 'util/color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Global.init().then((e) => runApp(MyApp()));
+  Global.init().then(
+    (e) => runApp(MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,9 +30,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primarySwatch: primary,
       ),
-      themeMode: (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool)
-          ? ThemeMode.light
-          : ThemeMode.dark,
+      themeMode: (LocalStorage.getInstance().get(THEME_IS_LIGHT_KEY) as bool) ? ThemeMode.light : ThemeMode.dark,
       builder: (context, child) => Scaffold(
         // Global GestureDetector that will dismiss the keyboard
         body: GestureDetector(
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
       getPages: EhenRouters.pages,
       home: BookOpenPageV2(
-        child: [HomePage(), HomePage()],
+        child: [HomePage()],
       ),
     );
   }
