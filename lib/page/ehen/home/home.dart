@@ -1,15 +1,15 @@
 import 'package:ehentai_browser/controller/theme_controller.dart';
-import 'package:ehentai_browser/page/home/widget/home_tab_page.dart';
+import 'package:ehentai_browser/page/ehen/home/widget/home_tab_page.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 
-import '../../common/const.dart';
-import '../../controller/home_controller.dart';
-import '../../model/gallery_model.dart';
-import '../../util/color.dart';
+import '../../../common/const.dart';
+import '../../../controller/home_controller.dart';
+import '../../../model/gallery_model.dart';
+import '../../../util/color.dart';
 
 class HomePage extends StatefulWidget {
   @override

@@ -7,16 +7,16 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
-import '../common/const.dart';
-import '../controller/home_controller.dart';
-import '../controller/theme_controller.dart';
-import '../util/color.dart';
-import '../util/image_save_load.dart';
-import '../widget/cata_widget.dart';
-import '../widget/dark_mode_switcher.dart';
-import '../widget/full_screen_photo.dart';
-import '../widget/loading_animation.dart';
-import '../xhenhttp/ehen/dao/xhen_dao.dart';
+import '../../common/const.dart';
+import '../../controller/home_controller.dart';
+import '../../controller/theme_controller.dart';
+import '../../util/color.dart';
+import '../../util/image_save_load.dart';
+import '../../widget/cata_widget.dart';
+import '../../widget/dark_mode_switcher.dart';
+import '../../widget/full_screen_photo.dart';
+import '../../widget/loading_animation.dart';
+import '../../xhenhttp/ehen/dao/xhen_dao.dart';
 
 class GalleryPage extends StatefulWidget {
   @override
