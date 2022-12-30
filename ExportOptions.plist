@@ -10,8 +10,8 @@
 	<string>development</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>ehBrowser</key>
-		<string>ehenB</string>
+		<key>com.lzr.ehen</key>
+		<string>ehenB_12</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Development</string>

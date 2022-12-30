@@ -11,7 +11,7 @@ ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack, Funct
     // titleSpacing: 0,
     // elevation: 0,
     // actions: <Widget>[DarkModeSwitch()],
-    // actions: [Container(width: 50,)],
+    actions: [Container(width: 60,)],
     title: EhenSearchBar(
       searchIconCallBack: searchIconCallBack,
       onSubmitted: searchCallBack,
@@ -19,7 +19,7 @@ ehenAppBar(Function(String) searchCallBack, Function() searchIconCallBack, Funct
       hint: "Use single space to search multiple.",
       defaultSearch: searBarText ?? "",
     ),
-    // leading: Container()
+    leading: Container()
     // leading: IconButton(
     //   color: Colors.white,
     //   icon: Icon(Icons.more_horiz),

@@ -1,16 +1,14 @@
 import 'package:ehentai_browser/controller/theme_controller.dart';
-import 'package:ehentai_browser/page/ehen/home/widget/home_tab_page.dart';
+import 'package:ehentai_browser/page/jabl/sear_page.dart';
 import 'package:ehentai_browser/page/jabl/video_home_tab_page.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 
 import '../../../common/const.dart';
-import '../../../controller/home_controller.dart';
-import '../../../model/gallery_model.dart';
 import '../../../util/color.dart';
+import '../../controller/video_controller.dart';
 
 class JHomePage extends StatefulWidget {
   @override
@@ -19,6 +17,10 @@ class JHomePage extends StatefulWidget {
 
 class _JHomePageState extends State<JHomePage> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late TabController _tabController;
+  // final _videoController = Get.put(VideoController());
+
+  var sear = '';
+
   @override
   void initState() {
     super.initState();
@@ -35,11 +37,12 @@ class _JHomePageState extends State<JHomePage> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ehenAppBar((text) {
+        Get.to(() => SearchPage(sear));
       }, () {
-
+        Get.to(() => SearchPage(sear));
       }, (text) {
-
-      }, ),
+        sear = text;
+      }),
       body: Stack(
         alignment: Alignment.center,
         children: [

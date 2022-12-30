@@ -1,4 +1,5 @@
 import 'package:ehentai_browser/model/video_gallery_model.dart';
+import 'package:ehentai_browser/page/jabl/video_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -26,16 +27,10 @@ class _VideoCardState extends State<VideoCard> {
   void initState() {
     super.initState();
     videoMo = widget.videoMo;
-    print(videoMo.mp4!);
-    _controller = VideoPlayerController.network(
-      videoMo.mp4!,
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true)
-    );
+    _controller = VideoPlayerController.network(videoMo.mp4!,
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
 
-    // Initialize the controller and store the Future for later use.
     _initializeVideoPlayerFuture = _controller.initialize();
-
-    // Use the controller to loop the video.
     _controller.setLooping(true);
   }
 
@@ -48,7 +43,9 @@ class _VideoCardState extends State<VideoCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Get.to(() => VideoDetailPage(videoMo));
+      },
       child: SizedBox(
         height: 210,
         child: Card(
@@ -70,7 +67,6 @@ class _VideoCardState extends State<VideoCard> {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: [
-
         FadeInImage.memoryNetwork(
           height: 120,
           width: size.width / 2,
@@ -78,7 +74,6 @@ class _VideoCardState extends State<VideoCard> {
           image: videoMo.imgUrl!,
           fit: BoxFit.cover,
         ),
-
         FutureBuilder(
           future: _initializeVideoPlayerFuture,
           builder: (context, snapshot) {
@@ -90,7 +85,8 @@ class _VideoCardState extends State<VideoCard> {
                 onLongPress: () {
                   showDialog(
                     context: context,
-                    builder: (BuildContext context) => TapablePhoto(videoMo.imgUrl!),
+                    builder: (BuildContext context) =>
+                        TapablePhoto(videoMo.imgUrl!),
                   );
                 },
                 onTap: () {
@@ -107,15 +103,14 @@ class _VideoCardState extends State<VideoCard> {
                 child: AnimatedOpacity(
                   opacity: _controller.value.isPlaying ? 1 : 0,
                   duration: Duration.zero,
-                  child:Container(
+                  child: Container(
                     height: 120,
                     child: VideoPlayer(_controller),
                   ),
                 ),
               );
             } else {
-              child = Container(
-              );
+              child = Container();
             }
 
             return child;
@@ -126,20 +121,26 @@ class _VideoCardState extends State<VideoCard> {
   }
 
   _iconText(IconData? iconData, String count) {
-    return Row(
-      children: [
-        if (iconData != null) Icon(iconData, color: Colors.white, size: 12),
-        Padding(
-          padding: EdgeInsets.only(left: 3,bottom: 5),
-          child: Text(
-            count,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 10,
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          if (iconData != null)
+            Icon(iconData,
+                color: galleryTitleColor(ThemeController.isLightTheme),
+                size: 12),
+          Padding(
+            padding: EdgeInsets.only(left: 3),
+            child: Text(
+              count,
+              style: TextStyle(
+                color: galleryTitleColor(ThemeController.isLightTheme),
+                fontSize: 10,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -162,14 +163,17 @@ class _VideoCardState extends State<VideoCard> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _iconText(Icons.ondemand_video, videoMo.watch!),
-                _iconText(Icons.favorite_border, videoMo.like_count!),
-                _iconText(null, videoMo.duration!),
-              ],
-            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _iconText(Icons.ondemand_video, videoMo.watch!),
+                  _iconText(Icons.favorite_border, videoMo.like_count!),
+                  _iconText(null, videoMo.duration!),
+                ],
+              ),
+            )
           ],
         ),
       ),

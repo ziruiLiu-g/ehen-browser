@@ -1,4 +1,5 @@
 import 'package:ehentai_browser/model/gallery_model.dart';
+import 'package:ehentai_browser/widget/paginator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,8 @@ class HomeTabPage extends StatefulWidget {
   HomeTabPage({required this.categoryName});
 }
 
-class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClientMixin {
+class _HomeTabPageState extends State<HomeTabPage>
+    with AutomaticKeepAliveClientMixin {
   final ctaController = Get.put(CataController());
   final _scrollController = ScrollController();
   final _homeController = Get.put(HomeController());
@@ -51,7 +53,10 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
           padding: EdgeInsets.only(left: 20, right: 20),
           child: Container(
             padding: EdgeInsets.only(
-                top: widget.categoryName == 'Home' ? MULTI_SELECT_CATA_BAR_HEIGHT : 0, bottom: BOTTOM_BAR_HEIGHT + 20),
+                top: widget.categoryName == 'Home'
+                    ? MULTI_SELECT_CATA_BAR_HEIGHT
+                    : 0,
+                bottom: BOTTOM_BAR_HEIGHT + 20),
             child: FutureBuilder<dynamic>(
               future: _searchGallerys(),
               builder: (context, snapshot) {
@@ -66,7 +71,9 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
                     key: ValueKey(0),
                     child: get_gallery_rows_list(),
                   );
-                  _scrollController.animateTo(.0, duration: Duration(milliseconds: 1000), curve: Curves.linear);
+                  _scrollController.animateTo(.0,
+                      duration: Duration(milliseconds: 1000),
+                      curve: Curves.linear);
                 }
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
@@ -142,51 +149,22 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
 
   // 下一页和上一页
   Widget _nextPrevButton() {
-    return BottomBlurNavigator(
-      widgets: <Widget>[
-        TextButton(
-          child: Text(
-            "<< PREV",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            ),
-          ),
-          onPressed: () {
-            // await _searchGallerys(true);
-            HapticFeedback.mediumImpact();
-            setState(() {
-              _homeController.isPrev = true;
-              _homeController.galleryVisible = false;
-            });
-          },
-        ),
-        TextButton(
-          onPressed: _simpleDialog,
-          child: Text(
-            "JUMP",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        TextButton(
-          child: Text(
-            "NEXT >>",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            ),
-          ),
-          onPressed: () {
-            HapticFeedback.mediumImpact();
-            setState(() {
-              _homeController.galleryVisible = false;
-            });
-          },
-        ),
-      ],
+    return nextPrevButton(
+      () {
+        HapticFeedback.mediumImpact();
+        setState(() {
+          print("xxxx");
+          _homeController.isPrev = true;
+          _homeController.galleryVisible = false;
+        });
+      },
+      () {
+        HapticFeedback.mediumImpact();
+        setState(() {
+          _homeController.galleryVisible = false;
+        });
+      },
+      selector: _simpleDialog,
     );
   }
 
