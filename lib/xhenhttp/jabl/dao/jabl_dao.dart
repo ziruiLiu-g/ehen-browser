@@ -5,10 +5,13 @@ import 'package:logger/logger.dart';
 
 import '../../../model/video_gallery_model.dart';
 
-enum PAGE_TYPE {sear, latest}
+enum PAGE_TYPE {sear, latest, week, today, star, starVideos}
 
 class JableDao {
   static const JABLE_PREFIX = 'https://jable.tv/';
+  static const JABLE_STARS_PREFIX = 'https://jable.tv/models/?from=';
+  static const JABLE_PREFIX_HOT_WEEK = 'https://jable.tv/hot/?&sort_by=video_viewed_week&from=';
+  static const JABLE_PREFIX_HOT_DAY = 'https://jable.tv/hot/?&sort_by=video_viewed_today&from=';
   static const JABLE_SEARCH_PREFIX = 'https://jable.tv/search/';
   static const JABLE_LATEST_PREFIX = 'https://jable.tv/latest-updates/';
   static const JABLE_LATEST_FROM_POSTDATE_PREFIX =
@@ -16,6 +19,8 @@ class JableDao {
 
   static const SEARCH_SELECTOR_PREFIX = '#list_videos_videos_list_search_result';
   static const LATEST_SELECTOR_PREFIX = '#list_videos_latest_videos_list';
+  static const COMMON_SELECTOR_PREFIX = '#list_videos_common_videos_list';
+  static const HOT_STARS_PREFIX = '#list_models_models_list';
 
   static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
   static var header = {
@@ -24,20 +29,60 @@ class JableDao {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
   };
 
-  static get_latest_document(int page) async {
-    var html = await _get_html_respone(JABLE_LATEST_PREFIX + '$page' + '/');
+  static get_document(PAGE_TYPE pg, int page, {String? sear, String? link}) async {
+    var html;
+    switch (pg) {
+      case PAGE_TYPE.sear:
+        html = await _get_html_respone(JABLE_SEARCH_PREFIX + '$sear/' + '?&from_videos=$page');
+        break;
+      case PAGE_TYPE.latest:
+        html = await _get_html_respone(JABLE_LATEST_PREFIX + '$page' + '/');
+        break;
+      case PAGE_TYPE.week:
+        html = await _get_html_respone(JABLE_PREFIX_HOT_WEEK + '$page');
+        break;
+      case PAGE_TYPE.today:
+        html = await _get_html_respone(JABLE_PREFIX_HOT_DAY + '$page');
+        break;
+      case PAGE_TYPE.star:
+        html = await _get_html_respone(JABLE_STARS_PREFIX + '$page');
+        break;
+      case PAGE_TYPE.starVideos:
+        html = await _get_html_respone(link! + '?&from=$page');
+        break;
+    }
+
     var h = parse(html);
     return h;
   }
 
-  static get_search_document(String sear, int page) async {
-      var html = await _get_html_respone(JABLE_SEARCH_PREFIX + '$sear/' + '?&from_videos=$page');
-      var h = parse(html);
-      return h;
+  static get_stars_list(Document h, PAGE_TYPE pageType) {
+    List<Element> starPics =
+    h.querySelectorAll('#list_models_models_list > div > section > div > div > div > a > div > img');
+    List<Element> starName = h.querySelectorAll('#list_models_models_list > div > section > div > div > div > a > div > div > h6');
+    List<Element> starVideosNum = h.querySelectorAll('#list_models_models_list > div > section > div > div > div > a > div > div > span');
+    List<Element> starPage = h.querySelectorAll('#list_models_models_list > div > section > div > div > div > a');
+
+    List<VideoStarModel> sl = [];
+    for (int i = 0; i < starPics.length; i++) {
+      var name = starName[i].nodes[0].text;
+      var pic = starPics[i].attributes['src'];
+      var videonum = starVideosNum[i].nodes[0].text;
+      var page = starPage[i].attributes['href'];
+
+      if(pic!.endsWith('svg')) {
+        pic = '';
+      }
+
+      VideoStarModel vs = VideoStarModel(name, pic, page, videoNum: videonum);
+      sl.add(vs);
+    }
+
+    return sl;
   }
 
-  static get_max_page(Document h, PAGE_TYPE page_type) {
-    String selectorHead = _get_selector_head(page_type);
+  static get_max_page(Document h, PAGE_TYPE pageType) {
+    String selectorHead = _get_selector_head(pageType);
 
     List<Element> page =
     h.querySelectorAll('$selectorHead > div > section > ul > li > a');
@@ -45,8 +90,8 @@ class JableDao {
     return int.parse(page.last.attributes['data-parameters'].toString().split(':').last.toString());
   }
 
-  static get_videoss_list(Document h, PAGE_TYPE page_type) async {
-    String selectorHead = _get_selector_head(page_type);
+  static get_videoss_list(Document h, PAGE_TYPE pageType) async {
+    String selectorHead = _get_selector_head(pageType);
 
 
     List<Element> picList =
@@ -121,6 +166,13 @@ class JableDao {
         return SEARCH_SELECTOR_PREFIX;
       case PAGE_TYPE.latest:
         return LATEST_SELECTOR_PREFIX;
+      case PAGE_TYPE.week:
+      case PAGE_TYPE.starVideos:
+      case PAGE_TYPE.today:
+        return COMMON_SELECTOR_PREFIX;
+      case PAGE_TYPE.star:
+        return HOT_STARS_PREFIX;
+
     }
   }
 

@@ -1,5 +1,7 @@
 import 'package:ehentai_browser/controller/theme_controller.dart';
+import 'package:ehentai_browser/page/ehen/startPage.dart';
 import 'package:ehentai_browser/page/jabl/sear_page.dart';
+import 'package:ehentai_browser/page/jabl/stars_page.dart';
 import 'package:ehentai_browser/page/jabl/video_home_tab_page.dart';
 import 'package:ehentai_browser/widget/app_bar_ehen.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +62,7 @@ class _JHomePageState extends State<JHomePage> with AutomaticKeepAliveClientMixi
                 child: TabBarView(
                   controller: _tabController,
                   children: JAB_HOME_CATEGORIES.map((tab) {
+                    if (tab == 'AV Stars') return StarsPage(categoryName: tab);
                     return VideoHomeTabPage(categoryName: tab);
                   }).toList(),
                 ),

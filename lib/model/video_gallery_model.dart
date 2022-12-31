@@ -19,8 +19,9 @@ class VideoStarModel {
   String? name;
   String? avatarUrl;
   String? webpage;
+  String? videoNum;
 
-  VideoStarModel(this.name, this.avatarUrl, this.webpage);
+  VideoStarModel(this.name, this.avatarUrl, this.webpage, {this.videoNum});
 }
 
 class VideoCataModel {

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../controller/theme_controller.dart';
-import '../../util/color.dart';
-import '../../widget/full_screen_photo.dart';
+import '../../../controller/theme_controller.dart';
+import '../../../util/color.dart';
+import '../../../widget/full_screen_photo.dart';
 
 class VideoCard extends StatefulWidget {
   VideoGalleryModel videoMo;

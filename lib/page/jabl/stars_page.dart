@@ -1,35 +1,37 @@
-import 'package:ehentai_browser/model/video_gallery_model.dart';
-import 'package:ehentai_browser/page/jabl/widget/video_card.dart';
-import 'package:ehentai_browser/xhenhttp/jabl/dao/jabl_dao.dart';
+import 'package:ehentai_browser/page/jabl/widget/stars_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:html/dom.dart' as doc;
 
 import '../../common/const.dart';
+import '../../model/video_gallery_model.dart';
 import '../../widget/loading_animation.dart';
 import '../../widget/paginator.dart';
+import '../../xhenhttp/jabl/dao/jabl_dao.dart';
 
-class VideoHomeTabPage extends StatefulWidget {
+class StarsPage extends StatefulWidget {
   final String categoryName;
 
-  @override
-  State<VideoHomeTabPage> createState() => _HomeTabPageState();
+  StarsPage({required this.categoryName});
 
-  VideoHomeTabPage({required this.categoryName});
+  @override
+  State<StarsPage> createState() => _StarsPageState();
 }
 
-class _HomeTabPageState extends State<VideoHomeTabPage> with AutomaticKeepAliveClientMixin {
-  late List<VideoGalleryModel> videoList;
-  int page = 0;
+class _StarsPageState extends State<StarsPage> {
+  late int page;
   late int maxpage;
   late PAGE_TYPE pageType;
 
+  late List<VideoStarModel> starList;
+
   @override
   void initState() {
-    videoList = [];
-    _get_pack_type();
     super.initState();
+    page = 1;
+    pageType = PAGE_TYPE.star;
   }
 
   @override
@@ -53,9 +55,9 @@ class _HomeTabPageState extends State<VideoHomeTabPage> with AutomaticKeepAliveC
                   margin: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT),
                   child: StaggeredGridView.countBuilder(
                     crossAxisCount: 2,
-                    itemCount: videoList.length,
+                    itemCount: starList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return VideoCard(videoList[index]);
+                      return StarsCard(starList[index]);
                     },
                     staggeredTileBuilder: (int index) {
                       return StaggeredTile.fit(1);
@@ -84,7 +86,7 @@ class _HomeTabPageState extends State<VideoHomeTabPage> with AutomaticKeepAliveC
 
   _loadData() async {
     doc.Document d = await JableDao.get_document(pageType, page);
-    videoList = await JableDao.get_videoss_list(d , pageType);
+    starList = await JableDao.get_stars_list(d , pageType);
     maxpage = JableDao.get_max_page(d, pageType);
   }
 
@@ -103,33 +105,16 @@ class _HomeTabPageState extends State<VideoHomeTabPage> with AutomaticKeepAliveC
         else page += 1;
       });
     },
-    middle: TextButton(
-      child: Text(
-        '${page == 0 ? 1 : page}/$maxpage',
-        style: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
+      middle: TextButton(
+        child: Text(
+          '${page == 0 ? 1 : page}/$maxpage',
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
         ),
+        onPressed: () {},
       ),
-      onPressed: () {},
-    ),
     );
   }
-
-  _get_pack_type() {
-    switch(widget.categoryName) {
-      case 'Latest':
-        pageType = PAGE_TYPE.latest;
-        break;
-      case 'Hot of the Week':
-        pageType = PAGE_TYPE.week;
-        break;
-      case 'Hot of the Day':
-        pageType = PAGE_TYPE.today;
-        break;
-    }
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

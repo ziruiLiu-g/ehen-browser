@@ -1,61 +1,55 @@
+import 'package:ehentai_browser/model/video_gallery_model.dart';
 import 'package:ehentai_browser/page/jabl/widget/video_card.dart';
+import 'package:ehentai_browser/xhenhttp/jabl/dao/jabl_dao.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:html/dom.dart' as doc;
 
 import '../../common/const.dart';
-import '../../model/video_gallery_model.dart';
 import '../../widget/dark_mode_switcher.dart';
 import '../../widget/loading_animation.dart';
 import '../../widget/paginator.dart';
-import '../../widget/search_bar.dart';
-import '../../xhenhttp/jabl/dao/jabl_dao.dart';
 
-class SearchPage extends StatefulWidget {
-  var sear;
+class StarVideoPage extends StatefulWidget {
+  final String starpageLink;
+  final String starName;
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<StarVideoPage> createState() => _HomeTabPageState();
 
-  SearchPage(this.sear);
+  StarVideoPage({required this.starpageLink, required this.starName});
 }
 
-class _SearchPageState extends State<SearchPage> {
-  int page = 1;
-  late int maxpage;
-  late String sear;
+class _HomeTabPageState extends State<StarVideoPage> with AutomaticKeepAliveClientMixin {
   late List<VideoGalleryModel> videoList;
+  int page = 0;
+  late int maxpage;
+  late PAGE_TYPE pageType;
 
   @override
   void initState() {
-    super.initState();
-    sear = widget.sear;
     videoList = [];
+    pageType = PAGE_TYPE.starVideos;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          color: Colors.white,
+          onPressed: () => Get.back(),
+        ),
         actions: <Widget>[
           Stack(
             children: [Container(), DarkModeSwitch()],
           )
         ],
-        title: EhenSearchBar(
-          searchIconCallBack: () => (text) {
-            setState(() {});
-          },
-          onSubmitted: (text) {
-            HapticFeedback.mediumImpact();
-            setState(() {});
-          },
-          inputCallBack: (text) {
-            sear = text;
-          },
-          hint: "Use single space to search multiple.",
-        ),
+        title: Text(widget.starName, style: TextStyle(color: Colors.white),),
       ),
       body: MediaQuery.removePadding(
         removeTop: true,
@@ -73,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
               child = Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT),
+                    margin: EdgeInsets.only(bottom: BOTTOM_BAR_HEIGHT, top: 10),
                     child: StaggeredGridView.countBuilder(
                       crossAxisCount: 2,
                       itemCount: videoList.length,
@@ -107,36 +101,39 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   _loadData() async {
-    doc.Document d = await JableDao.get_document(PAGE_TYPE.sear, page, sear: sear);
-    videoList = await JableDao.get_videoss_list(d, PAGE_TYPE.sear);
-    maxpage = JableDao.get_max_page(d, PAGE_TYPE.sear);
+    doc.Document d = await JableDao.get_document(pageType, page, link: widget.starpageLink);
+    videoList = await JableDao.get_videoss_list(d , pageType);
+    maxpage = JableDao.get_max_page(d, pageType);
   }
 
   _nextPrevButton() {
-    return nextPrevButton(
-      () {
-        if (page == 1) return;
-        HapticFeedback.mediumImpact();
-        setState(() {
-          page -= 1;
-        });
-      },
-      () {
-        HapticFeedback.mediumImpact();
-        setState(() {
-          page += 1;
-        });
-      },
-      middle: TextButton(
-        child: Text(
-          '$page/$maxpage',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-          ),
+    return nextPrevButton(() {
+      if (page == 0) return;
+      HapticFeedback.mediumImpact();
+      setState(() {
+        if (page == 2) page -= 2;
+        else page -= 1;
+      });
+    }, () {
+      HapticFeedback.mediumImpact();
+      setState(() {
+        if (page == 0) page += 2;
+        else page += 1;
+      });
+    },
+    middle: TextButton(
+      child: Text(
+        '${page == 0 ? 1 : page}/$maxpage',
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.white,
         ),
-        onPressed: () {},
       ),
+      onPressed: () {},
+    ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
