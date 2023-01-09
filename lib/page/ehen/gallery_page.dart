@@ -1,6 +1,6 @@
 import 'package:ehentai_browser/model/gallery_model.dart';
+import 'package:ehentai_browser/page/ehen/home/home.dart';
 import 'package:ehentai_browser/router/routes.dart';
-import 'package:ehentai_browser/util/view_util.dart';
 import 'package:ehentai_browser/widget/bottom_blur_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,9 +24,9 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<GalleryPage> {
-  static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
+  // static final _logger = Logger(printer: PrettyPrinter(methodCount: 0));
   var scrollController = ScrollController();
-  final _homeController = Get.find<HomeController>();
+  // final _homeController = Get.find<HomeController>();
 
   late GalleryModel g;
   late String cover;
@@ -206,8 +206,8 @@ class _GalleryPageState extends State<GalleryPage> {
           InkWell(
             borderRadius: BorderRadius.circular(4.0),
             onTap: () {
-              _homeController.sear = tb;
-              Get.toNamed(Routes.Home);
+              // _homeController.sear = tb;
+              Get.to(HomePage(sear: tb));
               HapticFeedback.lightImpact();
             },
             child: Container(

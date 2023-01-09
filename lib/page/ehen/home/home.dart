@@ -12,12 +12,16 @@ import '../../../model/gallery_model.dart';
 import '../../../util/color.dart';
 
 class HomePage extends StatefulWidget {
+  String? sear;
+
   @override
   State<HomePage> createState() => _HomePageState();
+
+  HomePage({this.sear});
 }
 
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  final _homeController = Get.put(HomeController());
+  final _homeController = HomeController();
 
   late TabController _tabController;
 
@@ -27,6 +31,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin,
   void initState() {
     super.initState();
     _tabController = TabController(length: EHENTAI_HOME_CATEGORIES.length, vsync: this);
+    _homeController.sear = widget.sear ?? '';
   }
 
   @override
@@ -69,7 +74,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin,
                 child: TabBarView(
                   controller: _tabController,
                   children: EHENTAI_HOME_CATEGORIES.map((tab) {
-                    return HomeTabPage(categoryName: tab);
+                    return HomeTabPage(categoryName: tab, homeController: _homeController,);
                   }).toList(),
                 ),
               ),

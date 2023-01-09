@@ -19,7 +19,6 @@ class JHomePage extends StatefulWidget {
 
 class _JHomePageState extends State<JHomePage> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late TabController _tabController;
-  // final _videoController = Get.put(VideoController());
 
   var sear = '';
 

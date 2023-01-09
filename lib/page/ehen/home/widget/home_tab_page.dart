@@ -15,24 +15,26 @@ import 'multi_cata_check.dart';
 
 class HomeTabPage extends StatefulWidget {
   final String categoryName;
+  final HomeController homeController;
 
   @override
   State<HomeTabPage> createState() => _HomeTabPageState();
 
-  HomeTabPage({required this.categoryName});
+  HomeTabPage({required this.categoryName, required this.homeController});
 }
 
 class _HomeTabPageState extends State<HomeTabPage>
     with AutomaticKeepAliveClientMixin {
   final ctaController = Get.put(CataController());
   final _scrollController = ScrollController();
-  final _homeController = Get.put(HomeController());
+  late final _homeController;
 
   List<GalleryModel> glist = [];
 
   @override
   void initState() {
     super.initState();
+    _homeController = widget.homeController;
     _homeController.cata = '${ctaController.cataNum}';
     _homeController.isPrev = false;
   }

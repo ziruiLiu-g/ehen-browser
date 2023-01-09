@@ -177,7 +177,6 @@ class JableDao {
   }
 
   static _get_html_respone(String url) async {
-    _logger.i('send request to: $url');
     var response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       return response.body;
