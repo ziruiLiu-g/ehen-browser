@@ -100,7 +100,7 @@ jobs:
       - name: Build xArchive
         if: matrix.target == 'ios'
         run: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=G7T6T3Z8S2 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=ehenB_12 clean archive CODE_SIGN_IDENTITY="Apple Development: zirui liu (8VH35B2B85)"
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM='zirui liu' -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=ehenB_12 clean archive CODE_SIGN_IDENTITY="Apple Development: zirui liu (8VH35B2B85)"
 
       - name: Build Ipa
         if: matrix.target == 'ios'
