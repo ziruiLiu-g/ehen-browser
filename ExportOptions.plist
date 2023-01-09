@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.lzr.ehen</key>
-		<string>ehenB_12</string>
+		<string>ehen_23_01</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Development</string>
